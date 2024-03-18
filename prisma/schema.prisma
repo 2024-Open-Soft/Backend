@@ -15,9 +15,9 @@ type EmbeddedMoviesAwards {
 
 type EmbeddedMoviesImdb {
   id     Int
-  /// Multiple data types found: String: 0.3%, Float: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Float: 99.8% out of 1000 sampled entries
   rating Json
-  /// Multiple data types found: String: 0.3%, Int: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Int: 99.8% out of 1000 sampled entries
   votes  Json
 }
 
@@ -54,9 +54,9 @@ type MoviesAwards {
 
 type MoviesImdb {
   id     Int
-  /// Multiple data types found: String: 0.3%, Float: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.5%, Float: 99.5% out of 1000 sampled entries
   rating Json
-  /// Multiple data types found: String: 0.3%, Int: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.5%, Int: 99.5% out of 1000 sampled entries
   votes  Json
 }
 
@@ -75,14 +75,14 @@ type MoviesTomatoes {
 
 type MoviesTomatoesCritic {
   meter      Int?
-  numReviews Int?
+  numReviews Int
   rating     Float?
 }
 
 type MoviesTomatoesViewer {
   meter      Int?
   numReviews Int
-  rating     Float?
+  rating     Float
 }
 
 type TheatersLocation {
@@ -135,8 +135,7 @@ model embedded_movies {
   tomatoes           EmbeddedMoviesTomatoes?
   type               String
   writers            String[]
-  /// Multiple data types found: String: 0.4%, Int: 99.6% out of 1000 sampled entries
-  year               Json
+  year               Int
 }
 
 model movies {
@@ -161,7 +160,7 @@ model movies {
   tomatoes           MoviesTomatoes?
   type               String
   writers            String[]
-  /// Multiple data types found: String: 0.3%, Int: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Int: 99.8% out of 1000 sampled entries
   year               Json
 }
 
