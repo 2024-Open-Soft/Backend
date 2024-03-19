@@ -103,13 +103,25 @@ type TheatersLocationGeo {
   type        String
 }
 
+type MobileNumber {
+  countryCode String
+  phoneNumber String
+}
+
+type History {
+  movie_id  String
+  timeStamp String @default("00:00:00")
+}
+
 model comments {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  date     DateTime @db.Date
-  email    String
-  movie_id String   @db.ObjectId
-  name     String
+  id       String          @id @default(auto()) @map("_id") @db.ObjectId
+  date     DateTime        @db.Date
+  userId   String          @db.ObjectId
+  movieId  String          @db.ObjectId
+  movie    embedded_movies @relation(fields: [movieId], references: [id])
+  parentId String
   text     String
+  user     User            @relation(fields: [userId], references: [id])
 }
 
 model embedded_movies {
@@ -136,56 +148,9 @@ model embedded_movies {
   type               String
   writers            String[]
   year               Int
-}
-
-model movies {
-  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
-  awards             MoviesAwards
-  cast               String[]
-  countries          String[]
-  directors          String[]
-  fullplot           String?
-  genres             String[]
-  imdb               MoviesImdb
-  languages          String[]
-  lastupdated        String
-  metacritic         Int?
-  num_mflix_comments Int
-  plot               String?
-  poster             String?
-  rated              String?
-  released           DateTime?       @db.Date
-  runtime            Int?
-  title              String
-  tomatoes           MoviesTomatoes?
-  type               String
-  writers            String[]
-  /// Multiple data types found: String: 0.2%, Int: 99.8% out of 1000 sampled entries
-  year               Json
-}
-
-model sessions {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  jwt     String
-  user_id String @unique(map: "user_id_1")
-}
-
-model theaters {
-  id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  location  TheatersLocation
-  theaterId Int
-
-  @@index([location.geo], map: "geo index")
-}
-
-model users {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  email       String @unique(map: "email_1")
-  name        String
-  password    String
-  isAdmin     Boolean @default(false)
-  /// Nested objects had no data in the sample dataset to introspect a nested type.
-  preferences Json?
+  User               User?                   @relation(fields: [userId], references: [id])
+  userId             String?                 @db.ObjectId
+  comments           comments[]
 }
 
 model User {
@@ -193,22 +158,30 @@ model User {
   name          String              @unique(map: "name_1")
   email         String              @unique(map: "email_1")
   password      String
-  phone         String?
+  phone         MobileNumber
   isAdmin       Boolean             @default(false)
   paymentToken  String?
   subscriptions SubscriptionState[]
-  createdAt     DateTime            @db.Date
-  updatedAt     DateTime            @db.Date
+  genres        String[]
+  languages     String[]
+  history       History[]
+  watchLater    embedded_movies[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  comments      comments[]
 }
 
 model SubscriptionState {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String   @db.ObjectId
-  subscriptionId String
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String        @db.ObjectId
+  subscriptionId String        @db.ObjectId
+  subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
   status         String
-  startDate      DateTime @db.Date
-  endDate        DateTime @db.Date
-  User           User     @relation(fields: [userId], references: [id])
+  startDate      DateTime      @db.Date
+  endDate        DateTime      @db.Date
+  User           User          @relation(fields: [userId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 enum SubscriptionType {
@@ -220,10 +193,15 @@ enum SubscriptionType {
 }
 
 model Subscriptions {
-  id       String                 @id @default(auto()) @map("_id") @db.ObjectId
-  type     SubscriptionType
-  price    Float
-  features SubscriptionFeatures[]
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  type               SubscriptionType
+  price              Float
+  discountPercentage Float
+  features           SubscriptionFeatures[]
+  SubscriptionState  SubscriptionState[]
+  discount           Int
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
 }
 
 model SubscriptionFeatures {
@@ -233,14 +211,6 @@ model SubscriptionFeatures {
   featureValue       String
   Subscriptions      Subscriptions? @relation(fields: [subscriptionsId], references: [id])
   subscriptionsId    String?        @db.ObjectId
-}
-
-// OTP should have atleast one of email or phone
-model OTP {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String?
-  phone     String?
-  otp       String
-  createdAt DateTime @db.Date
-  updatedAt DateTime @db.Date
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 }
