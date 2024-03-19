@@ -15,9 +15,9 @@ type EmbeddedMoviesAwards {
 
 type EmbeddedMoviesImdb {
   id     Int
-  /// Multiple data types found: String: 0.3%, Float: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Float: 99.8% out of 1000 sampled entries
   rating Json
-  /// Multiple data types found: String: 0.3%, Int: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Int: 99.8% out of 1000 sampled entries
   votes  Json
 }
 
@@ -54,9 +54,9 @@ type MoviesAwards {
 
 type MoviesImdb {
   id     Int
-  /// Multiple data types found: String: 0.3%, Float: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Float: 99.8% out of 1000 sampled entries
   rating Json
-  /// Multiple data types found: String: 0.3%, Int: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Int: 99.8% out of 1000 sampled entries
   votes  Json
 }
 
@@ -75,14 +75,14 @@ type MoviesTomatoes {
 
 type MoviesTomatoesCritic {
   meter      Int?
-  numReviews Int?
+  numReviews Int
   rating     Float?
 }
 
 type MoviesTomatoesViewer {
   meter      Int?
   numReviews Int
-  rating     Float?
+  rating     Float
 }
 
 type TheatersLocation {
@@ -135,8 +135,7 @@ model embedded_movies {
   tomatoes           EmbeddedMoviesTomatoes?
   type               String
   writers            String[]
-  /// Multiple data types found: String: 0.4%, Int: 99.6% out of 1000 sampled entries
-  year               Json
+  year               Int
 }
 
 model movies {
@@ -149,10 +148,12 @@ model movies {
   genres             String[]
   imdb               MoviesImdb
   languages          String[]
-  lastupdated        String
+  createdAt          DateTime        @db.Date
+  updatedAt          DateTime        @db.Date
   metacritic         Int?
   num_mflix_comments Int
   plot               String?
+  plot_embedding     Float[]
   poster             String?
   rated              String?
   released           DateTime?       @db.Date
@@ -161,31 +162,18 @@ model movies {
   tomatoes           MoviesTomatoes?
   type               String
   writers            String[]
-  /// Multiple data types found: String: 0.3%, Int: 99.7% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Int: 99.8% out of 1000 sampled entries
   year               Json
+  videoUrl           String?
 }
 
-model sessions {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  jwt     String
-  user_id String @unique(map: "user_id_1")
-}
-
-model theaters {
-  id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  location  TheatersLocation
-  theaterId Int
-
-  @@index([location.geo], map: "geo index")
-}
-
-model users {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  email       String @unique(map: "email_1")
-  name        String
-  password    String
-  /// Nested objects had no data in the sample dataset to introspect a nested type.
-  preferences Json?
+model History {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  movieId   String   @db.ObjectId
+  createdAt DateTime @db.Date
+  updatedAt DateTime @db.Date
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model User {
@@ -197,6 +185,9 @@ model User {
   isAdmin       Boolean             @default(false)
   paymentToken  String?
   subscriptions SubscriptionState[]
+  genres        String[]
+  languages     String[]
+  history       History[]
   createdAt     DateTime            @db.Date
   updatedAt     DateTime            @db.Date
 }
@@ -223,6 +214,7 @@ model Subscriptions {
   id       String                 @id @default(auto()) @map("_id") @db.ObjectId
   type     SubscriptionType
   price    Float
+  discountPercentage  Float
   features SubscriptionFeatures[]
 }
 
@@ -233,14 +225,4 @@ model SubscriptionFeatures {
   featureValue       String
   Subscriptions      Subscriptions? @relation(fields: [subscriptionsId], references: [id])
   subscriptionsId    String?        @db.ObjectId
-}
-
-// OTP should have atleast one of email or phone
-model OTP {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String?
-  phone     String?
-  otp       String
-  createdAt DateTime @db.Date
-  updatedAt DateTime @db.Date
 }
