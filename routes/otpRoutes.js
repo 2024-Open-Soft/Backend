@@ -6,4 +6,3 @@ router.post("/generate", generateOtp);
 router.post("/verify", verifyOtp);
 
 module.exports = router;
-
