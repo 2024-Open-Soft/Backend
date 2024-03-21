@@ -5,6 +5,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = require('express').Router();
 const { check, validationResult } = require('express-validator');
+const jwtExpiryTime = 36000;  // JWT expiry time in seconds
 
 
 router.post('/user/register',  // Register user endpoint
@@ -13,9 +14,14 @@ router.post('/user/register',  // Register user endpoint
     check('name', 'Name length should be 10 to 20 characters')
         .isLength({ min: 10, max: 20 }),
     check('password', 'Password length should be 8 to 10 characters')
-        .isLength({ min: 8, max: 10 })],
+        .isLength({ min: 8, max: 10 }),
+    check('token', 'Token is required').exists()],
     async (req, res) => {   // Register user controller
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
             const { username, name, password, token } = req.body;  // Get username, name, password and token from request body
             const decoded = jwt.verify(token, JWT_SECRET);  // Verify token
@@ -30,7 +36,9 @@ router.post('/user/register',  // Register user endpoint
                 return res.status(404).json({ message: "User not found" });
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);  // Hash password
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);  // Hash password
+
             const updatedUser = await prisma.user.update({  // Update user
                 where: {
                     id: decoded.id
@@ -41,7 +49,7 @@ router.post('/user/register',  // Register user endpoint
                     password: hashedPassword,
                 }
             });
-            const newToken = jwt.sign({ id: updatedUser.id }, JWT_SECRET);  // Generate new token or user id
+            const newToken = jwt.sign({ id: updatedUser.id }, JWT_SECRET, { expiresIn: jwtExpiryTime });  // Generate new token or user id
             res.json({ message: "User updated", data: { token: newToken, user: updatedUser } });  // Return token and user data
         } catch (err) {
             console.error(err);
