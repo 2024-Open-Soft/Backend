@@ -5,19 +5,10 @@ const { PrismaClient } = require('@prisma/client');
 const { check, validationResult, oneOf } = require('express-validator');
 const prisma = new PrismaClient();
 const { JWT_SECRET } = process.env;
-const router = express.Router();
-
-const validateLogin = [
-    check('password').notEmpty().withMessage('Password is required'),
-    oneOf([
-        check('email').isEmail().withMessage('Invalid email format'),
-        check('phoneNumber').isMobilePhone().withMessage('Invalid phone number format')
-    ]).withMessage('Email or phone number is required')
-];
 
 
-
-router.post('/user/login', validateLogin, async (req, res) => {
+const loginUser = async (req, res) => {
+    console.log(req.body)
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -52,6 +43,8 @@ router.post('/user/login', validateLogin, async (req, res) => {
         console.error(err);
         res.status(500).send('Server error');
     }
-});
+}
 
-module.exports = router;
+module.exports = {
+    loginUser
+}
