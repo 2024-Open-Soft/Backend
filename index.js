@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 3001
 const jwt = require('jsonwebtoken');
 const userController = require('./controllers/getUserData')
 
@@ -21,6 +21,8 @@ function authenticateToken(req, res, next) {
 }
 
 app.get('/user/profile',userController.getUserProfile)
+app.get('/admin/user', authenticateToken, userController.getUsers)
+app.get('/admin/user/:id', authenticateToken, userController.getUserProfileByAdmin)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
