@@ -1,28 +1,46 @@
+const message = require('../utils/message');
+const sendingMail = require('../utils/mailer');
+const jwt = require('jsonwebtoken');
+const prisma = require('../prisma/index');
+
+require('dotenv').config();
+
+
 const generateOtp = async (req, res) => {
     try {
-        console.log(req.body);
-
         if (!req.body || !req.body.credential || !req.body.type) {
             return res.status(400).json({ message: "Please provide a phone number or email" });
         }
 
-        let otp = Math.floor(100000 + Math.random() * 900000);
+        if(req.body.type !== 'phoneNumber' && req.body.type !== 'email') {
+            return res.status(400).json({ message: "Please provide a valid type" });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000);
+
+        let tokenBody;
 
         const type = req.body.type;
         if (type === 'phoneNumber') {
             let phone = req.body.credential;
-
-            const message = require('../utils/message');
 
             //send the otp to the user
             message({
                 to: phone,
                 body: `Your OTP is ${otp}`
             });
+
+            tokenBody = { otp };
         }
         else if (type == 'email') {
             let email = req.body.credential;
-            const sendingMail = require('../utils/mailer');
+
+            if(!req.body.token) {
+                return res.status(400).json({ message: "Please provide a token for the email verification" });
+            }
+
+            let token = req.body.token;
+            const userId = jwt.verify(token, process.env.JWT_SECRET || 'seroweuhnclkhvasouae').userId;
 
             //send the otp to the user
             sendingMail({
@@ -31,23 +49,17 @@ const generateOtp = async (req, res) => {
                 subject: "OTP",
                 text: `Your OTP is ${otp}`
             });
+
+            tokenBody = { otp, userId }
         }
-        else {
-            return res.status(400).json({ message: "Please provide a type for verification" });
-        }
 
-        const bcrypt = require('bcryptjs');
-
-        //hash the otp
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(`${otp}`, salt);
-
-        console.log(hash, otp);
+        // use jwt to generate a token
+        const token = jwt.sign(tokenBody, process.env.JWT_SECRET || 'seroweuhnclkhvasouae', { expiresIn: '10m' });
 
         return res.status(200).json({
             message: "OTP sent successfully",
             data: {
-                "token": hash
+                "token": token
             }
         });
     }
@@ -59,8 +71,6 @@ const generateOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
     try {
-        console.log(req.body);
-
         if (!req.body || !req.body.otp || !req.body.token) {
             return res.status(400).json({ message: "Please provide an otp and token" });
         }
@@ -69,55 +79,50 @@ const verifyOtp = async (req, res) => {
             return res.status(400).json({ message: "Please provide a type for verification" });
         }
 
-        const otp = req.body.otp;
+        const otp = parseInt(req.body.otp);
         const token = req.body.token;
 
-        const bcrypt = require('bcryptjs');
+        // compare the otp using jwt
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'seroweuhnclkhvasouae');
 
-        //compare the otp
-        const isMatch = await bcrypt.compare(`${otp}`, token);
+        if (!decoded) {
+            return res.status(400).json({ message: "Invalid token" });
+        }
+
+        console.log(decoded.otp, otp);
+
+        const isMatch = decoded.otp === otp;
 
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid OTP" });
         }
 
-        const { PrismaClient } = require('@prisma/client');
-        const prisma = new PrismaClient();
-
-        // save the user to the database
-        // const user = await prisma.user.create({
-        //     data: {
-        //         email: req.body.email,
-        //         phone: req.body.phone
-        //     }
-        // });
-
         if(req.body.type === 'phoneNumber') {
-            const user = await prisma.user.create({
+            const user = await prisma.User.create({
                 data: {
-                    phone: req.body.credential
+                    phone: {
+                        countryCode: req.body.credential.substring(0, 3),
+                        phoneNumber: req.body.credential.substring(3)
+                    }
                 }
             });
 
             // get the user id
             const userId = user.id;
 
-            // encrypt the user id
-            const salt = await bcrypt.genSalt(10);
-            const hash = await bcrypt.hash(`${userId}`, salt);
+            // encrypt the user id using jwt
+            const token = jwt.sign({ userId }, process.env.JWT_SECRET || 'seroweuhnclkhvasouae', { expiresIn: '1h' });
 
             return res.status(200).json({
                 message: "OTP verified successfully",
                 data: {
-                    "token": hash
+                    "token": token
                 }
             });
         }
-
         else if(req.body.type == "email") {
             // find the user from the database by decrypting the token
-            const userId = await bcrypt.compare(`${token}`, token);
-
+            const userId = decoded.userId;
             const user = await prisma.user.findUnique({
                 where: {
                     id: userId
@@ -128,16 +133,34 @@ const verifyOtp = async (req, res) => {
                 return res.status(400).json({ message: "Invalid user" });
             }
 
-            
+            // add the email to the user
+            const updatedUser = await prisma.User.update({
+                where: {
+                    id: userId
+                },
+                data: {
+                    email: req.body.credential
+                }
+            });
+
+            // encrypt the user id using jwt 
+            const newToken = jwt.sign({ userId }, process.env.JWT_SECRET || 'seroweuhnclkhvasouae', { expiresIn: '1h' });
+
+            return res.status(200).json({
+                message: "OTP verified successfully",
+                data: {
+                    "token": token
+                }
+            });
         }
     }
     catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Internal server error" });
     }
-
 }
 
 module.exports = {
-    generateOtp
+    generateOtp,
+    verifyOtp
 }

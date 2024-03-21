@@ -155,9 +155,9 @@ model embedded_movies {
 
 model User {
   id            String              @id @default(auto()) @map("_id") @db.ObjectId
-  name          String              @unique(map: "name_1")
-  email         String              @unique(map: "email_1")
-  password      String
+  name          String?             @unique(map: "name_1")
+  email         String?             @unique(map: "email_1")
+  password      String?
   phone         MobileNumber
   isAdmin       Boolean             @default(false)
   paymentToken  String?
@@ -166,8 +166,8 @@ model User {
   languages     String[]
   history       History[]
   watchLater    embedded_movies[]
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  createdAt     DateTime?            @default(now())
+  updatedAt     DateTime?            @updatedAt
   comments      comments[]
 }
 
