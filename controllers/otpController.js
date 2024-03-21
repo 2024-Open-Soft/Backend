@@ -2,6 +2,7 @@ const message = require('../utils/message');
 const sendingMail = require('../utils/mailer');
 const jwt = require('jsonwebtoken');
 const prisma = require('../prisma/index');
+const bcrypt = require('bcryptjs');
 
 require('dotenv').config();
 
@@ -12,11 +13,11 @@ const generateOtp = async (req, res) => {
             return res.status(400).json({ message: "Please provide a phone number or email" });
         }
 
-        if(req.body.type !== 'phoneNumber' && req.body.type !== 'email') {
+        if (req.body.type !== 'phoneNumber' && req.body.type !== 'email') {
             return res.status(400).json({ message: "Please provide a valid type" });
         }
 
-        const otp = Math.floor(100000 + Math.random() * 900000);
+        let otp = Math.floor(100000 + Math.random() * 900000);
 
         let tokenBody;
 
@@ -30,12 +31,17 @@ const generateOtp = async (req, res) => {
                 body: `Your OTP is ${otp}`
             });
 
+            const salt = await bcrypt.genSalt(10);
+            otp = await bcrypt.hash(`${otp}`, salt);
+
+            console.log(otp);
+
             tokenBody = { otp };
         }
         else if (type == 'email') {
             let email = req.body.credential;
 
-            if(!req.body.token) {
+            if (!req.body.token) {
                 return res.status(400).json({ message: "Please provide a token for the email verification" });
             }
 
@@ -49,6 +55,9 @@ const generateOtp = async (req, res) => {
                 subject: "OTP",
                 text: `Your OTP is ${otp}`
             });
+
+            const salt = await bcrypt.genSalt(10);
+            otp = await bcrypt.hash(`${otp}`, salt);
 
             tokenBody = { otp, userId }
         }
@@ -75,7 +84,7 @@ const verifyOtp = async (req, res) => {
             return res.status(400).json({ message: "Please provide an otp and token" });
         }
 
-        if(!req.body.type){
+        if (!req.body.type) {
             return res.status(400).json({ message: "Please provide a type for verification" });
         }
 
@@ -89,15 +98,15 @@ const verifyOtp = async (req, res) => {
             return res.status(400).json({ message: "Invalid token" });
         }
 
-        console.log(decoded.otp, otp);
+        console.log(decoded);
 
-        const isMatch = decoded.otp === otp;
+        const isMatch = await bcrypt.compare(`${otp}`, decoded.otp);
 
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid OTP" });
         }
 
-        if(req.body.type === 'phoneNumber') {
+        if (req.body.type === 'phoneNumber') {
             const user = await prisma.User.create({
                 data: {
                     phone: {
@@ -120,7 +129,7 @@ const verifyOtp = async (req, res) => {
                 }
             });
         }
-        else if(req.body.type == "email") {
+        else if (req.body.type == "email") {
             // find the user from the database by decrypting the token
             const userId = decoded.userId;
             const user = await prisma.user.findUnique({
@@ -129,7 +138,7 @@ const verifyOtp = async (req, res) => {
                 }
             });
 
-            if(!user) {
+            if (!user) {
                 return res.status(400).json({ message: "Invalid user" });
             }
 
@@ -149,7 +158,7 @@ const verifyOtp = async (req, res) => {
             return res.status(200).json({
                 message: "OTP verified successfully",
                 data: {
-                    "token": token
+                    "token": newToken
                 }
             });
         }
