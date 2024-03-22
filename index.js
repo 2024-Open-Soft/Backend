@@ -4,6 +4,7 @@ const app = express();
 
 const otpRoutes = require("./routes/otpRoutes");
 const movieRoutes = require("./routes/movieRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 require("dotenv").config();
 
@@ -16,6 +17,7 @@ app.use(morgan("tiny"));
 
 app.use("/otp", otpRoutes);
 app.use("/movie", movieRoutes);
+app.use("/admin", adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

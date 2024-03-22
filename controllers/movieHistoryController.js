@@ -2,14 +2,14 @@ const prisma = require("../prisma/index");
 const bcrypt = require("bcryptjs");
 const { parseToken } = require("../utils/token");
 
-const updateHistoryController = (req, res) => {
+const updateHistoryController = async (req, res) => {
     try {
         const token = parseToken(req);
         const userId = token.userId;
 
         const { movieId, timestamp } = req.body;
 
-        const user = prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 id: userId
             }
@@ -30,7 +30,7 @@ const updateHistoryController = (req, res) => {
         user.history.unshift({ movieId, timestamp });
 
         // update the user's history
-        prisma.user.update({
+        await prisma.user.update({
             where: {
                 id: userId
             },
@@ -47,14 +47,14 @@ const updateHistoryController = (req, res) => {
     }
 }
 
-const deleteHistoryController = (req, res) => {
+const deleteHistoryController = async (req, res) => {
     try {
         const token = parseToken(req);
         const userId = token.userId;
 
         const { movieId } = req.body;
 
-        const user = prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 id: userId
             }
@@ -73,7 +73,7 @@ const deleteHistoryController = (req, res) => {
         }
 
         // update the user's history
-        prisma.user.update({
+        await prisma.user.update({
             where: {
                 id: userId
             },
