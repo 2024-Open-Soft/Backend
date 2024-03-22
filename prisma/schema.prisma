@@ -103,11 +103,6 @@ type TheatersLocationGeo {
   type        String
 }
 
-type MobileNumber {
-  countryCode String
-  phoneNumber String
-}
-
 type History {
   movie_id  String
   timeStamp String @default("00:00:00")
@@ -154,20 +149,20 @@ model embedded_movies {
 }
 
 model User {
-  id            String              @id @default(auto()) @map("_id") @db.ObjectId
-  name          String              @unique(map: "name_1")
-  email         String              @unique(map: "email_1")
-  password      String
-  phone         MobileNumber
-  isAdmin       Boolean             @default(false)
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?
+  password      String?
+  phone         String               @unique
+  isAdmin       Boolean              @default(false)
   paymentToken  String?
   subscriptions SubscriptionState[]
   genres        String[]
   languages     String[]
   history       History[]
   watchLater    embedded_movies[]
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
   comments      comments[]
 }
 
