@@ -170,8 +170,37 @@ const verifyOtp = async (req, res) => {
   }
 }
 
+const resetPassword = async (req, res) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: parseToken(req.userId).userId,
+    }    
+  });
+  
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  newPass = req.body.password;
+
+  try {
+    prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: newPass,
+      },
+    })
+  } catch(err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 module.exports = {
   generateOtp,
   verifyOtp,
+  resetPassword,
 };
 

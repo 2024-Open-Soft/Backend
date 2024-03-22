@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { generateOtp, verifyOtp } = require("../controllers/otpController");
+const { generateOtp, verifyOtp, resetPassword} = require("../controllers/otpController");
 
 
 
@@ -40,6 +40,18 @@ router.post("/verify", [
   }
   next();
 }, verifyOtp);
+
+router.post('/reset_password', [
+  body("phoneNumber", "Phone number is required").exists().isMobilePhone(),
+  body("password", "Password is required").exists().isLength({ min: 6 }),
+],(req, res, next) => {
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+}, resetPassword)
 
 module.exports = router;
 
