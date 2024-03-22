@@ -4,25 +4,28 @@ const jwt = require("jsonwebtoken");
 const prisma = require("../prisma/index");
 const bcrypt = require("bcryptjs");
 
+
 const generateOtp = async (req, res) => {
+
   try {
-    if (!req.body || !req.body.credential || !req.body.type) {
+    if (!req.body || !(req.body.email || req.body.phoneNumber)) {
       return res
         .status(400)
         .json({ message: "Please provide a phone number or email" });
     }
 
-    if (req.body.type !== "phoneNumber" && req.body.type !== "email") {
-      return res.status(400).json({ message: "Please provide a valid type" });
-    }
+    // if (req.body.type !== "phoneNumber" && req.body.type !== "email") {
+    //   return res.status(400).json({ message: "Please provide a valid type" });
+    // }
 
     let otp = Math.floor(100000 + Math.random() * 900000);
 
     let tokenBody;
 
-    const type = req.body.type;
+    const type = req.body.email ? "email" : "phoneNumber";
+
     if (type === "phoneNumber") {
-      let phone = req.body.credential;
+      let phone = req.body.phoneNumber;
 
       //send the otp to the user
       message({
@@ -37,7 +40,7 @@ const generateOtp = async (req, res) => {
 
       tokenBody = { otp };
     } else if (type == "email") {
-      let email = req.body.credential;
+      let email = req.body.email;
 
       if (!req.body.token) {
         return res.status(400).json({
@@ -86,16 +89,10 @@ const generateOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    if (!req.body || !req.body.otp || !req.body.token) {
+    if (!req.body || !(req.body.email || req.body.phoneNumber)) {
       return res
         .status(400)
         .json({ message: "Please provide an otp and token" });
-    }
-
-    if (!req.body.type) {
-      return res
-        .status(400)
-        .json({ message: "Please provide a type for verification" });
     }
 
     const otp = parseInt(req.body.otp);
@@ -119,12 +116,14 @@ const verifyOtp = async (req, res) => {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    if (req.body.type === "phoneNumber") {
+    const type = req.body.email ? "email" : "phoneNumber";
+
+    if (type === "phoneNumber") {
       const user = await prisma.User.create({
         data: {
           phone: {
-            countryCode: req.body.credential.substring(0, 3),
-            phoneNumber: req.body.credential.substring(3),
+            countryCode: req.body.phoneNumber.substring(0, 3),
+            phoneNumber: req.body.phoneNumber.substring(3),
           },
         },
       });
@@ -145,7 +144,7 @@ const verifyOtp = async (req, res) => {
           token: token,
         },
       });
-    } else if (req.body.type == "email") {
+    } else if (type == "email") {
       // find the user from the database by decrypting the token
       const userId = decoded.userId;
       const user = await prisma.user.findUnique({
@@ -164,7 +163,7 @@ const verifyOtp = async (req, res) => {
           id: userId,
         },
         data: {
-          email: req.body.credential,
+          email: req.body.email,
         },
       });
 
@@ -192,3 +191,4 @@ module.exports = {
   generateOtp,
   verifyOtp,
 };
+
