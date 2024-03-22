@@ -1,6 +1,7 @@
 const JWT_SECRET = process.env.JWT_SECRET;  // Get JWT secret from environment variables
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+const { parseToken } = require('../utils/token');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { validationResult } = require('express-validator');
@@ -14,12 +15,12 @@ const register = async (req, res) => {   // Register user controller
             return res.status(400).json({ errors: errors.array() });
         }
         const { name, password } = req.body;  // Get name, password and token from request body
-        const token = req.headers.authorization.split(' ')[1];  // 
-        const decoded = jwt.verify(token, JWT_SECRET);  // Verify token
+        
+        const decoded = parseToken(req);  // Get user id from token
 
-        const existingUser = await prisma.User.findUnique({  // Check if user already exists
+        const existingUser = await prisma.user.findUnique({  // Check if user already exists
             where: {
-                id: decoded.id
+                id: decoded.userId
             }
         });
 
@@ -30,9 +31,9 @@ const register = async (req, res) => {   // Register user controller
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);  // Hash password
 
-        const updatedUser = await prisma.User.update({  // Update user
+        const updatedUser = await prisma.user.update({  // Update user
             where: {
-                id: decoded.id
+                id: decoded.userId
             },
             data: {
                 name,
