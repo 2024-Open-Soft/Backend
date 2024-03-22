@@ -6,28 +6,7 @@ const { updateWatchlistController, deleteWatchlistController } = require('../con
 
 
 
-const { body, header, oneOf, validationResult, withMessage } = require("express-validator");
-
-// Middleware function to validate email or phoneNumber
-const validateAddToHistory = [
-    // Check if email or phoneNumber is provided
-    oneOf([
-        body("movieId",).exists().isMobilePhone(),
-        [
-            body("email").exists().isEmail(),
-            header("Authorization").exists()
-        ]
-    ], { message: "Email with Authentication or phoneNumber is required" }),
-    // Check for validation errors
-    (req, res, next) => {
-        const errors = validationResult(req);
-        console.log(errors);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
-    }
-];
+const { body, header, validationResult } = require("express-validator");
 
 
 router.post("/history",
