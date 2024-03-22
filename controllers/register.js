@@ -1,4 +1,4 @@
-const JWT_SECRET = process.env.JWT_SECRET || '123';
+const JWT_SECRET = process.env.JWT_SECRET;  // Get JWT secret from environment variables
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client');
@@ -13,7 +13,7 @@ const register = async (req, res) => {   // Register user controller
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { name, password } = req.body;  // Get username, name, password and token from request body
+        const { name, password } = req.body;  // Get name, password and token from request body
         const token = req.headers.authorization.split(' ')[1];  // 
         const decoded = jwt.verify(token, JWT_SECRET);  // Verify token
 
