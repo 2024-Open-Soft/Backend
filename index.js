@@ -11,7 +11,10 @@ require("dotenv").config();
 require('dotenv').config();
 
 const PORT = 3001;
+const loginRoutes = require('./routes/loginRoutes');
 
+app.use(express.json());
+app.use('/user', loginRoutes);
 app.use(express.json());
 app.use(morgan("tiny"));
 
