@@ -1,3 +1,6 @@
+const { parseToken } = require("../utils/token");
+const prisma = require("../prisma/index");
+
 const updateWatchlistController = async (req, res) => {
     try {
         const token = parseToken(req);

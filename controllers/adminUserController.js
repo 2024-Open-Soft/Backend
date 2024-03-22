@@ -1,4 +1,6 @@
-const prisma = require('../prisma/index');
+const { parseToken } = require("../utils/token");
+const prisma = require("../prisma/index");
+
 
 const getAllUsers = async (req, res) => {
     try {

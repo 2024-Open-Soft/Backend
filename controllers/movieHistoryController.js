@@ -1,5 +1,4 @@
 const prisma = require("../prisma/index");
-const bcrypt = require("bcryptjs");
 const { parseToken } = require("../utils/token");
 
 const updateHistoryController = async (req, res) => {
