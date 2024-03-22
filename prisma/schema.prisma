@@ -54,9 +54,9 @@ type MoviesAwards {
 
 type MoviesImdb {
   id     Int
-  /// Multiple data types found: String: 0.4%, Float: 99.6% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Float: 99.8% out of 1000 sampled entries
   rating Json
-  /// Multiple data types found: String: 0.4%, Int: 99.6% out of 1000 sampled entries
+  /// Multiple data types found: String: 0.2%, Int: 99.8% out of 1000 sampled entries
   votes  Json
 }
 
@@ -109,12 +109,14 @@ type History {
 }
 
 model comments {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  date     DateTime @db.Date
-  email    String
-  movie_id String   @db.ObjectId
-  name     String
+  id       String          @id @default(auto()) @map("_id") @db.ObjectId
+  date     DateTime        @db.Date
+  userId   String          @db.ObjectId
+  movieId  String          @db.ObjectId
+  movie    embedded_movies @relation(fields: [movieId], references: [id])
+  parentId String
   text     String
+  user     User            @relation(fields: [userId], references: [id])
 }
 
 model embedded_movies {
@@ -140,35 +142,9 @@ model embedded_movies {
   tomatoes           EmbeddedMoviesTomatoes?
   type               String
   writers            String[]
-  /// Multiple data types found: String: 0.1%, Int: 99.9% out of 1000 sampled entries
-  year               Json
-}
-
-model movies {
-  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
-  awards             MoviesAwards
-  cast               String[]
-  countries          String[]
-  directors          String[]
-  fullplot           String?
-  genres             String[]
-  imdb               MoviesImdb
-  languages          String[]
-  lastupdated        String
-  metacritic         Int?
-  num_mflix_comments Int
-  plot               String?
-  poster             String?
-  rated              String?
-  released           DateTime?       @db.Date
-  runtime            Int?
-  title              String
-  tomatoes           MoviesTomatoes?
-  type               String
-  writers            String[]
   year               Int
-  User               User?           @relation(fields: [userId], references: [id])
-  userId             String?         @db.ObjectId
+  User               User?                   @relation(fields: [userId], references: [id])
+  userId             String?                 @db.ObjectId
   comments           comments[]
 }
 
@@ -211,11 +187,25 @@ enum SubscriptionType {
   PLATINUM
 }
 
-model users {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  email       String @unique(map: "email_1")
-  name        String
-  password    String
-  /// Nested objects had no data in the sample dataset to introspect a nested type.
-  preferences Json?
+model Subscriptions {
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  type               SubscriptionType
+  price              Float
+  discountPercentage Float
+  features           SubscriptionFeatures[]
+  SubscriptionState  SubscriptionState[]
+  discount           Int
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+}
+
+model SubscriptionFeatures {
+  featureId          String         @id @default(auto()) @map("_id") @db.ObjectId
+  featureName        String
+  featureDescription String
+  featureValue       String
+  Subscriptions      Subscriptions? @relation(fields: [subscriptionsId], references: [id])
+  subscriptionsId    String?        @db.ObjectId
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 }
