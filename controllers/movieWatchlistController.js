@@ -17,7 +17,7 @@ const updateWatchlistController = async (req, res) => {
         // update the user's watchlist
         await prisma.user.update({
             where: {
-                id: user.userId
+                id: user.id
             },
             data: {
                 watchlist: user.watchlist
@@ -49,7 +49,7 @@ const deleteWatchlistController = async (req, res) => {
         // update the user's watchlist
         await prisma.user.update({
             where: {
-                id: user.userId
+                id: user.id
             },
             data: {
                 watchlist: user.watchlist

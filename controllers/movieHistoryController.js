@@ -21,7 +21,7 @@ const updateHistoryController = async (req, res) => {
         // update the user's history
         await prisma.user.update({
             where: {
-                id: user.userId
+                id: user.id
             },
             data: {
                 history: user.history
@@ -53,7 +53,7 @@ const deleteHistoryController = async (req, res) => {
         // update the user's history
         await prisma.user.update({
             where: {
-                id: user.userId
+                id: user.id
             },
             data: {
                 history: user.history
