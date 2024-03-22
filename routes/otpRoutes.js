@@ -42,7 +42,6 @@ router.post("/verify", [
 }, verifyOtp);
 
 router.post('/reset_password', [
-  body("phoneNumber", "Phone number is required").exists().isMobilePhone(),
   body("password", "Password is required").exists().isLength({ min: 6 }),
 ],(req, res, next) => {
   const errors = validationResult(req);
