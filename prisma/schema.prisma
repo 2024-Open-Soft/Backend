@@ -103,11 +103,6 @@ type TheatersLocationGeo {
   type        String
 }
 
-type MobileNumber {
-  countryCode String
-  phoneNumber String
-}
-
 type History {
   movie_id  String
   timeStamp String @default("00:00:00")
@@ -158,7 +153,7 @@ model User {
   name          String?
   email         String?
   password      String?
-  phone         MobileNumber
+  phone         String               @unique
   isAdmin       Boolean              @default(false)
   paymentToken  String?
   subscriptions SubscriptionState[]
