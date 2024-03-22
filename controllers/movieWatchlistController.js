@@ -1,25 +1,13 @@
-const { parseToken } = require("../utils/token");
 const prisma = require("../prisma/index");
 
 const updateWatchlistController = async (req, res) => {
     try {
-        const token = parseToken(req);
-        const userId = token.userId;
-
         const { movieId } = req.body;
 
-        const user = await prisma.user.findUnique({
-            where: {
-                id: userId
-            }
-        });
-
-        if (!user) {
-            return res.status(400).json({ message: "User not found" });
-        }
+        const user = req.user;
 
         // find movieId in user.watchlist
-        const watchlist = user.watchlist.find((movie) => movie.movieId === movieId);
+        const watchlist = user.watchlist.find((movie) => movie.movie_id === movieId);
 
         // add that movie to the watchlist
         if (!watchlist) {
@@ -29,7 +17,7 @@ const updateWatchlistController = async (req, res) => {
         // update the user's watchlist
         await prisma.user.update({
             where: {
-                id: userId
+                id: user.userId
             },
             data: {
                 watchlist: user.watchlist
@@ -46,33 +34,22 @@ const updateWatchlistController = async (req, res) => {
 
 const deleteWatchlistController = async (req, res) => {
     try {
-        const token = parseToken(req);
-        const userId = token.userId;
-
         const { movieId } = req.body;
 
-        const user = await prisma.user.findUnique({
-            where: {
-                id: userId
-            }
-        });
-
-        if (!user) {
-            return res.status(400).json({ message: "User not found" });
-        }
+        const user = req.user;
 
         // find movieId in user.watchlist
-        const watchlist = user.watchlist.find((movie) => movie.movieId === movieId);
+        const watchlist = user.watchlist.find((movie) => movie.movie_id === movieId);
 
         // remove that movie from the watchlist
         if (watchlist) {
-            user.watchlist = user.watchlist.filter((movie) => movie.movieId !== movieId);
+            user.watchlist = user.watchlist.filter((movie) => movie.movie_id !== movieId);
         }
 
         // update the user's watchlist
         await prisma.user.update({
             where: {
-                id: userId
+                id: user.userId
             },
             data: {
                 watchlist: user.watchlist
