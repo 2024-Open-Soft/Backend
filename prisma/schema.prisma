@@ -103,26 +103,9 @@ type TheatersLocationGeo {
   type        String
 }
 
-model SubscriptionFeatures {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
-model SubscriptionState {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
-model Subscriptions {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
-model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  /// Field referred in an index, but found no data to define the type.
-  email Json?  @unique(map: "email_1")
-  /// Field referred in an index, but found no data to define the type.
-  name  Json?  @unique(map: "name_1")
-  /// Field referred in an index, but found no data to define the type.
-  phone Json?  @unique(map: "phone_1")
+type History {
+  movie_id  String
+  timeStamp String @default("00:00:00")
 }
 
 model comments {
@@ -184,20 +167,48 @@ model movies {
   type               String
   writers            String[]
   year               Int
+  User               User?           @relation(fields: [userId], references: [id])
+  userId             String?         @db.ObjectId
+  comments           comments[]
 }
 
-model sessions {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  jwt     String
-  user_id String @unique(map: "user_id_1")
+model User {
+  id            String              @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?
+  password      String?
+  phone         String              @unique
+  isAdmin       Boolean             @default(false)
+  paymentToken  String?
+  subscriptions SubscriptionState[]
+  genres        String[]
+  languages     String[]
+  history       History[]
+  watchLater    embedded_movies[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  comments      comments[]
 }
 
-model theaters {
-  id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  location  TheatersLocation
-  theaterId Int
+model SubscriptionState {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String        @db.ObjectId
+  subscriptionId String        @db.ObjectId
+  subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
+  status         String
+  startDate      DateTime      @db.Date
+  endDate        DateTime      @db.Date
+  User           User          @relation(fields: [userId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
 
-  @@index([location.geo], map: "geo index")
+enum SubscriptionType {
+  FREE
+  BASIC
+  STANDARD
+  PREMIUM
+  PLATINUM
 }
 
 model users {
