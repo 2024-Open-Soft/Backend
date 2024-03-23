@@ -1,6 +1,6 @@
 const message = require("../utils/message");
 const sendingMail = require("../utils/mailer");
-const prisma = require("../prisma/index");
+const { User } = require("../models");
 const bcrypt = require("bcryptjs");
 
 const { generateJWT, parseToken } = require("../utils/token");
@@ -26,11 +26,7 @@ const generateOtpEmail = async (req) => {
   const email = req.body.email;
   const token = parseToken(req);
   const userId = token.userId;
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await User.findById(userId);
   if (!user) {
     return res.status(400).json({ message: "Mobile number not verified" });
   }
@@ -80,11 +76,7 @@ const verifyOtpEmail = async (req) => {
   const token = parseToken(req);
   const userId = token.userId;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await User.findById(userId);
 
   if (!user) {
     return res.status(400).json({ message: "Invalid user" });
@@ -96,14 +88,12 @@ const verifyOtpEmail = async (req) => {
     return res.status(400).json({ message: "Invalid OTP" });
   }
 
-  const updatedUser = await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
+  const updatedUser = await User.updateOne(
+    { id: userId },
+    {
       email: token.email,
     },
-  });
+  );
 
   const newToken = generateJWT({ userId });
   return newToken;
@@ -117,25 +107,19 @@ const verifyOtpPhoneNumber = async (req) => {
   if (!isMatch) {
     return res.status(400).json({ message: "Invalid OTP" });
   }
-  const findUser = await prisma.user.findFirst({
-    where: {
-      phone: token.phoneNumber,
-    },
+  const findUser = await User.findOne({
+    phone: token.phoneNumber,
   });
   if (findUser) {
     if (findUser.password) {
       return { msg: "User already exists" };
     }
-    const deletedUser = await prisma.user.delete({
-      where: {
-        id: findUser.id,
-      },
+    const deletedUser = await User.deleteOne({
+      id: findUser.id,
     });
   }
-  const user = await prisma.user.create({
-    data: {
-      phone: token.phoneNumber,
-    },
+  const user = await User.create({
+    phone: token.phoneNumber,
   });
 
   const newToken = generateJWT({ userId: user.id });
