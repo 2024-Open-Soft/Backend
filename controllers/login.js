@@ -1,10 +1,10 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
 const { check, validationResult, oneOf } = require('express-validator');
-const prisma = new PrismaClient();
 const { JWT_SECRET } = process.env;
+
+const User = require('../models/user');
 
 
 const loginUser = async (req, res) => {
@@ -16,14 +16,12 @@ const loginUser = async (req, res) => {
         }
 
         const { email, phoneNumber, password } = req.body;
-
-        const user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email },
-                    { phone: phoneNumber }
-                ],
-            }
+        
+        const user = await User.findOne({
+            $or: [
+                { email },
+                { phoneNumber }
+            ]
         });
 
         if (!user) {
