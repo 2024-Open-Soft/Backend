@@ -108,21 +108,23 @@ const verifyOtpPhoneNumber = async (req) => {
     return res.status(400).json({ message: "Invalid OTP" });
   }
   const findUser = await User.findOne({
-    phone: token.phoneNumber,
+    phone: token.phoneNumber
   });
+
+
   if (findUser) {
     if (findUser.password) {
       return { msg: "User already exists" };
     }
     const deletedUser = await User.deleteOne({
-      id: findUser.id,
+      _id: findUser._id,
     });
   }
   const user = await User.create({
-    phone: token.phoneNumber,
+    phone: token.phoneNumber
   });
 
-  const newToken = generateJWT({ userId: user.id });
+  const newToken = generateJWT({ userId: user._id });
   return { token: newToken };
 };
 

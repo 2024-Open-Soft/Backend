@@ -34,9 +34,18 @@ const loginUser = async (req, res) => {
             return res.status(401).send('Invalid credentials');
         }
 
-        const token = jwt.sign({ id: user._id }, JWT_SECRET);
-        const { password: pass, ...userWithoutPassword } = user;
-        res.json({ user: userWithoutPassword, token });
+        const data = user.toObject();
+        const token = jwt.sign({ id: data._id }, JWT_SECRET);
+        delete data.password;
+
+        return res.json({
+            message: "User logged in",
+            data: {
+                token,
+                user: data
+            }
+        });
+
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error');

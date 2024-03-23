@@ -5,6 +5,10 @@ const { parseToken } = require("../utils/token");
 const { validationResult } = require("express-validator");
 const jwtExpiryTime = 36000; // JWT expiry time in seconds
 
+const { generateJWT } = require("../utils/token");
+
+const { User } = require("../models");
+
 const register = async (req, res) => {
   // Register user controller
   try {
@@ -26,20 +30,26 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt); // Hash password
 
-    const updatedUser = await User.update(
-      { _id: decoded.userId },
+    const updatedUser = await User.findByIdAndUpdate(
+      decoded.userId,
       {
         name,
         password: hashedPassword,
       },
-    );
-    const newToken = jwt.sign({ id: updatedUser._id }, JWT_SECRET, {
-      expiresIn: jwtExpiryTime,
-    }); // Generate new token or user id
+      { new: true },
+    ); // Update user name and password in database
+
+      // remove password from usr
+    const user = updatedUser.toObject();
+    delete user.password;
+
+    const newToken = generateJWT({ id: user._id }, jwtExpiryTime); // Generate new token or user id
+
     res.json({
       message: "User updated",
-      data: { token: newToken, user: updatedUser },
+      data: { token: newToken, user },
     }); // Return token and user data
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });

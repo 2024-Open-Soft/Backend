@@ -12,9 +12,9 @@ const isLoggedIn = async (req, res, next) => {
     }
     try {
         const data = parseToken(req);
-        // console.log('data', data)
-        const user = await User.findById(data.userId);
-        // console.log('user', user)
+        console.log('data', data);
+        const user = await User.findById(data.id);
+        console.log('user', user)
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }

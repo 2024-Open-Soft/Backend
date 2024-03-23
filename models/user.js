@@ -24,11 +24,9 @@ const UserSchema = new Schema(
     email: String,
     password: String,
     phone: {
-      type: new Schema({
-        countryCode: String,
-        phoneNumber: String,
-      }),
+      type: String,
       required: true,
+      unique: true,
     },
     isAdmin: { type: Boolean, default: false },
     genres: [String],

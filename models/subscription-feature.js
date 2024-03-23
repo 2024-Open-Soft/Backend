@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const SubscriptionFeaturesSchema = new Schema(
+const SubscriptionFeatureSchema = new Schema(
   {
     name: String,
     description: String,
@@ -11,8 +11,8 @@ const SubscriptionFeaturesSchema = new Schema(
 );
 
 const SubscriptionFeatures = mongoose.model(
-  "subscription_features",
-  SubscriptionFeaturesSchema,
+  "subscription_feature",
+  SubscriptionFeatureSchema,
 );
 
 module.exports = SubscriptionFeatures;

@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const app = express();
 const PORT = 3001;
 
+const userRoutes = require("./routes/userRoutes");
 const otpRoutes = require("./routes/otpRoutes");
 const register_routes = require("./routes/register_routes");
 const loginRoutes = require("./routes/loginRoutes");
