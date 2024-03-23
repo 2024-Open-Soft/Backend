@@ -108,7 +108,7 @@ type History {
   timeStamp String @default("00:00:00")
 }
 
-model comments {
+model Comment {
   id       String          @id @default(auto()) @map("_id") @db.ObjectId
   date     DateTime        @db.Date
   userId   String          @db.ObjectId
@@ -145,7 +145,7 @@ model embedded_movies {
   year               Int
   User               User?                   @relation(fields: [userId], references: [id])
   userId             String?                 @db.ObjectId
-  comments           comments[]
+  comments           Comment[]
 }
 
 model User {
@@ -163,7 +163,7 @@ model User {
   watchLater    embedded_movies[]
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
-  comments      comments[]
+  comments      Comment[]
 }
 
 model SubscriptionState {
