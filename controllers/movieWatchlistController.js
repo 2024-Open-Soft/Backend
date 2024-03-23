@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const { User } = require("../models");
 
 const updateWatchlistController = async (req, res) => {
 	try {
