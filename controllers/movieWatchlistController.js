@@ -1,75 +1,57 @@
 const prisma = require("../prisma/index");
 
 const updateWatchlistController = async (req, res) => {
-    try {
-        const { movieId } = req.body;
-        const user = req.user;
+  try {
+    const { movieId } = req.body;
+    const user = req.user;
 
-        // find movieId in user.watchlist
-        if(!user.watchLater)
-            user.watchLater = []
-        const watchlist = user.watchLater.find((movie) => movie.movieId === movieId);
-        // add that movie to the watchlist
-        if (!watchlist) {
-            user.watchLater.push({ movieId, userId: user.id });
-        }
-        // update the user's watchlist
-        await prisma.user.update({
-            where: {
-                id: user.id
-            },
-            data :{
-                watchLater: {
-                    create: [{
-                        movieId: movieId,
-                        userId: user.id
-                    }]}
-                }
-            
-        })
-        return res.status(200).json({ message: "Watchlist updated" });
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-}
+    if (user.watchLaterIds.includes(movieId))
+      return res.status(400).json({ message: "already exists in watchlist" });
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        watchLaterIds: {
+          push: movieId,
+        },
+      },
+    });
+    return res.status(200).json({ message: "Watchlist updated" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const deleteWatchlistController = async (req, res) => {
-    try {
-        const { movieId } = req.body;
+  try {
+    const { movieId } = req.body;
 
-        const user = req.user;
+    const user = req.user;
 
-        // find movieId in user.watchlist
-        if(!user.watchLater)
-            user.watchLater = []
-        const watchlist = user.watchLater.find((movie) => movie.movie_id === movieId);
+    if (!user.watchLaterIds.includes(movieId))
+      return res.status(400).json({ message: "does not exist in watchlist" });
 
-        // remove that movie from the watchlist
-        if (watchlist) {
-            user.watchLater = user.watchLater.filter((movie) => movie.movie_id !== movieId);
-        }
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        watchLaterIds: user.watchLaterIds.filter((mId) => mId != movieId),
+      },
+    });
 
-        // update the user's watchlist
-        await prisma.user.update({
-            where: {
-                id: user.id
-            },
-            data: {
-                watchLater: user.watchLater
-            }
-        });
-
-        return res.status(200).json({ message: "Watchlist updated" });
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-}
+    return res.status(200).json({ message: "Watchlist updated" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
-    updateWatchlistController,
-    deleteWatchlistController
-}
+  updateWatchlistController,
+  deleteWatchlistController,
+};
+
