@@ -42,7 +42,7 @@ router.post("/verify", [
 }, verifyOtp);
 
 router.post('/reset_password', [
-  body("password", "Password is required").exists().isLength({ min: 6 }),
+  body("password", "Password is required").exists().isLength({ min: 8 }),
 ],(req, res, next) => {
   const errors = validationResult(req);
   console.log(errors);
