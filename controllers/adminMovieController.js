@@ -10,7 +10,11 @@ const getAllMovies = async (req, res) => {
             take: 10
         });
 
-        return res.status(200).json({ movies });
+        return res.status(200).json({
+            data: {
+                movies
+            }
+        });
     }
     catch (error) {
         console.log(error);
@@ -26,14 +30,17 @@ const getMovie = async (req, res) => {
             where: {
                 id: parseInt(id)
             },
-            select: requiredProperties
         });
 
         if (!movie) {
             return res.status(404).json({ message: "Movie not found" });
         }
 
-        return res.status(200).json({ movie });
+        return res.status(200).json({
+            data: {
+                movie
+            }
+        });
     }
     catch (error) {
         console.log(error);

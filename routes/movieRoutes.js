@@ -5,7 +5,6 @@ const { updateHistoryController, deleteHistoryController } = require('../control
 const { updateWatchlistController, deleteWatchlistController } = require('../controllers/movieWatchlistController');
 
 
-
 const { body, header, validationResult } = require("express-validator");
 
 
@@ -73,3 +72,5 @@ router.delete("/watchlist",
     },
     isLoggedIn, deleteWatchlistController
 );
+
+module.exports = router;
