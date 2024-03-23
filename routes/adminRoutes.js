@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const { isLoggedIn, isAdmin } = require('../middleware');
-const { getAllUsers, getUser } = require('../controllers/adminController');
+const { getAllUsers, getUser } = require('../controllers/adminUserController');
 const { getMovie, getAllMovies } = require('../controllers/adminMovieController');
 
 
