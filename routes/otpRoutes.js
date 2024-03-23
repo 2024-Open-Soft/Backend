@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { generateOtp, verifyOtp } = require("../controllers/otpController");
+const { generateOtp, verifyOtp, resetPassword} = require("../controllers/otpController");
 
 
 
@@ -40,6 +40,19 @@ router.post("/verify", [
   }
   next();
 }, verifyOtp);
+
+router.post('/reset_password', [
+  check('password', 'Password length should be atleast 8 characters')
+        .isLength({ min: 8 }),
+  header('Authorization', 'Token is required').exists(),
+],(req, res, next) => {
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+}, resetPassword)
 
 module.exports = router;
 

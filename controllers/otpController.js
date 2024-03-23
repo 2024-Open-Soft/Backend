@@ -170,8 +170,40 @@ const verifyOtp = async (req, res) => {
   }
 }
 
+const resetPassword = async (req, res) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: parseToken(req.userId).userId,
+    }    
+  });
+  
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const newHashedPass = await bcrypt.hash(req.body.password, salt);
+
+  try {
+    prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: newHashedPass,
+      },
+    })
+  } catch(err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+  const newToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: jwtExpiryTime });  // Generate new token or user id
+  res.json({ message: "Password Updated", data: { token: newToken, user: user } });  // Return token and user data
+}
+
 module.exports = {
   generateOtp,
   verifyOtp,
+  resetPassword,
 };
 
