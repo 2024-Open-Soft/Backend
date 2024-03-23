@@ -42,7 +42,9 @@ router.post("/verify", [
 }, verifyOtp);
 
 router.post('/reset_password', [
-  body("password", "Password is required").exists().isLength({ min: 8 }),
+  check('password', 'Password length should be atleast 8 characters')
+        .isLength({ min: 8 }),
+  header('Authorization', 'Token is required').exists(),
 ],(req, res, next) => {
   const errors = validationResult(req);
   console.log(errors);
