@@ -10,9 +10,9 @@ const SubscriptionFeatureSchema = new Schema(
   { timestamps: true },
 );
 
-const SubscriptionFeatures = mongoose.model(
+const SubscriptionFeature = mongoose.model(
   "Subscription_Feature",
   SubscriptionFeatureSchema,
 );
 
-module.exports = SubscriptionFeatures;
+module.exports = SubscriptionFeature;
