@@ -1,4 +1,4 @@
-const prisma = require("../prisma/index");
+const User = require("../models/user");
 
 const updateWatchlistController = async (req, res) => {
   try {
@@ -8,16 +8,10 @@ const updateWatchlistController = async (req, res) => {
     if (user.watchLaterIds.includes(movieId))
       return res.status(400).json({ message: "already exists in watchlist" });
 
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        watchLaterIds: {
-          push: movieId,
-        },
-      },
-    });
+    await User.findByIdAndUpdate(user.id, {
+      $push: { watchLaterIds: movieId },
+    })
+
     return res.status(200).json({ message: "Watchlist updated" });
   } catch (error) {
     console.log(error);

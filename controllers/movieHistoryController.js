@@ -1,4 +1,4 @@
-const prisma = require("../prisma/index");
+const User = require('../models/user');
 
 const updateHistoryController = async (req, res) => {
     try {
@@ -19,14 +19,7 @@ const updateHistoryController = async (req, res) => {
         user.history.unshift({ movieId, timestamp });
 
         // update the user's history
-        await prisma.user.update({
-            where: {
-                id: user.id
-            },
-            data: {
-                history: user.history
-            }
-        });
+        await User.findByIdAndUpdate(user.id, { history: user.history })
 
         return res.status(200).json({ message: "History updated" });
     }
@@ -51,14 +44,7 @@ const deleteHistoryController = async (req, res) => {
         }
 
         // update the user's history
-        await prisma.user.update({
-            where: {
-                id: user.id
-            },
-            data: {
-                history: user.history
-            }
-        });
+        await User.findByIdAndUpdate(user.id, { history: user.history })
 
         return res.status(200).json({ message: "History updated" });
     }
