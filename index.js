@@ -1,30 +1,33 @@
+require("dotenv").config();
+
 const express = require("express");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
+
 const app = express();
+const PORT = 3001;
 
 const otpRoutes = require("./routes/otpRoutes");
+const register_routes = require("./routes/register_routes");
+const loginRoutes = require("./routes/loginRoutes");
+// const comment_routes = require('./routes/comment_route')
 const movieRoutes = require("./routes/movieRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
-require("dotenv").config();
-
-// const mongoose = require('mongoose');
-
-const PORT = 3001;
-
 app.use(express.json());
 app.use(morgan("tiny"));
-
+app.use("/user", register_routes);
+app.use("/user", loginRoutes);
 app.use("/otp", otpRoutes);
 app.use("/movie", movieRoutes);
-app.use("/admin", adminRoutes);
+// app.use("/admin", adminRoutes);
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
+async function main() {
+  await mongoose.connect(process.env.DATABASE_URL);
+  app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+    console.log(`Test on http://localhost:${PORT}/`);
+  });
+}
 
-// mongoose.connect(process.env.DATABASE_URL).then(() => {
-//     app.listen(PORT, () => {
-//         console.log(`App listening on port ${PORT}`)
-//     })
-// });.
+main();

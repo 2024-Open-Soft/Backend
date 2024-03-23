@@ -13,12 +13,13 @@ const generateOtpPhoneNumber = async (req) => {
     to: phone,
     body: `Your OTP is ${otp}`,
   });
+  console.log({ otp });
   const salt = await bcrypt.genSalt(10);
   otp = await bcrypt.hash(`${otp}`, salt);
   const token = generateJWT({ otp, phoneNumber: phone });
   console.log("Controller", token);
-  return token
-}
+  return token;
+};
 
 const generateOtpEmail = async (req) => {
   let otp = Math.floor(100000 + Math.random() * 900000);
@@ -30,7 +31,7 @@ const generateOtpEmail = async (req) => {
       id: userId,
     },
   });
-  if(!user){
+  if (!user) {
     return res.status(400).json({ message: "Mobile number not verified" });
   }
   sendingMail({
@@ -44,13 +45,13 @@ const generateOtpEmail = async (req) => {
   otp = await bcrypt.hash(`${otp}`, salt);
 
   const newToken = generateJWT({ otp, userId, email });
-  return newToken
-}
+  return newToken;
+};
 
 const generateOtp = async (req, res) => {
   try {
     const { email, phoneNumber } = req.body;
-    if(phoneNumber){
+    if (phoneNumber) {
       const token = await generateOtpPhoneNumber(req, res);
       console.log("Generated OTP", token);
       return res.status(200).json({
@@ -74,7 +75,7 @@ const generateOtp = async (req, res) => {
   }
 };
 
-const verifyOtpEmail = async req => {
+const verifyOtpEmail = async (req) => {
   const otp = parseInt(req.body.otp);
   const token = parseToken(req);
   const userId = token.userId;
@@ -105,10 +106,10 @@ const verifyOtpEmail = async req => {
   });
 
   const newToken = generateJWT({ userId });
-  return newToken
-}
+  return newToken;
+};
 
-const verifyOtpPhoneNumber = async req => {
+const verifyOtpPhoneNumber = async (req) => {
   const otp = parseInt(req.body.otp);
   const token = parseToken(req);
 
@@ -121,9 +122,9 @@ const verifyOtpPhoneNumber = async req => {
       phone: token.phoneNumber,
     },
   });
-  if(findUser){
-    if(findUser.password){
-      return { msg: "User already exists" }
+  if (findUser) {
+    if (findUser.password) {
+      return { msg: "User already exists" };
     }
     const deletedUser = await prisma.user.delete({
       where: {
@@ -138,15 +139,15 @@ const verifyOtpPhoneNumber = async req => {
   });
 
   const newToken = generateJWT({ userId: user.id });
-  return { token: newToken }
-}
+  return { token: newToken };
+};
 
 const verifyOtp = async (req, res) => {
   try {
     const token = parseToken(req);
-    if(token.phoneNumber){
+    if (token.phoneNumber) {
       const { token, msg } = await verifyOtpPhoneNumber(req, res);
-      if(msg){
+      if (msg) {
         return res.status(400).json({ message: msg });
       }
       return res.status(200).json({
@@ -168,10 +169,9 @@ const verifyOtp = async (req, res) => {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 module.exports = {
   generateOtp,
   verifyOtp,
 };
-
