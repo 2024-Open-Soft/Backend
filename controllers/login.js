@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
             return res.status(401).send('Invalid credentials');
         }
 
-        const token = jwt.sign({ id: user.id }, JWT_SECRET);
+        const token = jwt.sign({ id: user._id }, JWT_SECRET);
         const { password: pass, ...userWithoutPassword } = user;
         res.json({ user: userWithoutPassword, token });
     } catch (err) {

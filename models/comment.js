@@ -9,7 +9,6 @@ const CommentSchema = new Schema({
   date: Date,
   user: ref("User"),
   movie: ref("Movie"),
-  parent: ref("Comment"),
   text: String,
 });
 

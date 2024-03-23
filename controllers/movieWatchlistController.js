@@ -8,7 +8,7 @@ const updateWatchlistController = async (req, res) => {
 		if (user.watchLaterIds.includes(movieId))
 			return res.status(400).json({ message: "already exists in watchlist" });
 
-		await User.findByIdAndUpdate(user.id, {
+		await User.findByIdAndUpdate(user._id, {
 			$push: { watchLaterIds: movieId },
 		})
 
@@ -29,7 +29,7 @@ const deleteWatchlistController = async (req, res) => {
 			return res.status(400).json({ message: "does not exist in watchlist" });
 
 
-		await User.findByIdAndUpdate(user.id, {
+		await User.findByIdAndUpdate(user._id, {
 			$pull: { watchLaterIds: movieId },
 		})
 

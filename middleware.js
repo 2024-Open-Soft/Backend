@@ -1,6 +1,5 @@
 const { parseToken } = require("./utils/token");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { User } = require("./models");
 
 const isLoggedIn = async (req, res, next) => {
     if (!req.headers.authorization) {
@@ -14,11 +13,7 @@ const isLoggedIn = async (req, res, next) => {
     try {
         const data = parseToken(req);
         // console.log('data', data)
-        const user = await prisma.user.findUnique({
-            where: {
-                id: data.id
-            }
-        });
+        const user = await User.findById(data.userId);
         // console.log('user', user)
         if (!user) {
             return res.status(400).json({ message: "User not found" });

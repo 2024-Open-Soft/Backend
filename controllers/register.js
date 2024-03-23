@@ -27,13 +27,13 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt); // Hash password
 
     const updatedUser = await User.update(
-      { id: decoded.userId },
+      { _id: decoded.userId },
       {
         name,
         password: hashedPassword,
       },
     );
-    const newToken = jwt.sign({ id: updatedUser.id }, JWT_SECRET, {
+    const newToken = jwt.sign({ id: updatedUser._id }, JWT_SECRET, {
       expiresIn: jwtExpiryTime,
     }); // Generate new token or user id
     res.json({
