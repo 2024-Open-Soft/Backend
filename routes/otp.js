@@ -1,19 +1,11 @@
 const router = require("express").Router();
+const { body, header, oneOf, validationResult } = require("express-validator");
 
-const { generateOtp, verifyOtp } = require("../controllers/otpController");
+const { generateOtp, verifyOtp } = require("../controllers/otp");
+const { validate } = require("../utils/validator");
 
-const {
-  body,
-  header,
-  oneOf,
-  validationResult,
-  withMessage,
-} = require("express-validator");
-const message = require("../utils/message");
-
-// Middleware function to validate email or phoneNumber
-const validateEmailOrPhoneNumber = [
-  // Check if email or phoneNumber is provided
+router.post(
+  "/generate",
   oneOf(
     [
       body("phoneNumber").exists().isMobilePhone(),
@@ -21,18 +13,10 @@ const validateEmailOrPhoneNumber = [
     ],
     { message: "Email with Authentication or phoneNumber is required" },
   ),
-  // Check for validation errors
-  (req, res, next) => {
-    const errors = validationResult(req);
-    console.log(errors);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    next();
-  },
-];
+  validate,
+  generateOtp,
+);
 
-router.post("/generate", validateEmailOrPhoneNumber, generateOtp);
 router.post(
   "/verify",
   [

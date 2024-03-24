@@ -15,9 +15,8 @@ async function sendingMail({ from, to, subject, text }) {
     //return the Transporter variable which has the sendMail method to send the mail which is within the mailOptions
     return await Transporter.sendMail(mailOptions);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
 module.exports = sendingMail;
-
