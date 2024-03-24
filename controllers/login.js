@@ -1,20 +1,12 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { check, validationResult, oneOf } = require('express-validator');
-const { JWT_SECRET } = process.env;
+const { generateJWT } = require('../utils/token');
+const jwtExpiryTime = 36000; // JWT expiry time in seconds
 
 const User = require('../models/user');
 
 
 const loginUser = async (req, res) => {
-    console.log(req.body)
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
         const { email = '', phoneNumber = '', password } = req.body;
         
         const user = await User.findOne({
@@ -35,7 +27,7 @@ const loginUser = async (req, res) => {
         }
 
         const data = user.toObject();
-        const token = jwt.sign({ id: data._id }, JWT_SECRET);
+        const token = generateJWT({ id: data._id }, jwtExpiryTime);
         delete data.password;
 
         return res.json({

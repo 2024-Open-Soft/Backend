@@ -1,5 +1,3 @@
-const JWT_SECRET = process.env.JWT_SECRET; // Get JWT secret from environment variables
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { parseToken } = require("../utils/token");
 const { validationResult } = require("express-validator");

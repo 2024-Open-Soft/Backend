@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 const JWT = process.env.JWT_SECRET || "seroweuhnclkhvasouae";
 
 const generateJWT = (data, expiresIn = '10m')=> {
-    console.log(data);
+    // console.log(data);
     const token = jwt.sign(data, JWT, { expiresIn: expiresIn});
-    console.log(token);
+    // console.log(token);
     return token;
 }
 
