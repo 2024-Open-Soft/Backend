@@ -1,7 +1,10 @@
+const { Comment } = require('../models');
+
 const deleteComment = async (req, res) => {
     try {
         const { commentId } = req.body;
-        const user = req.user;
+
+        console.log("commentId: ", commentId)
 
         // Check if the user is the owner of the comment
         const comment = await Comment.findByIdAndDelete(commentId);
