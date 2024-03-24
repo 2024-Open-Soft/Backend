@@ -1,5 +1,3 @@
-// createComment, getComments, deleteComment, editComment
-
 const { User, Comment } = require("../models");
 
 const getComments = async (req, res) => {
@@ -10,7 +8,7 @@ const getComments = async (req, res) => {
 
     comments.map(async (comment) => ({
       ...comment,
-      user: await User.findById(comment.user).toObject(),
+      user: (await User.findById(comment.user)).toObject(),
     }));
 
     return res.json({
@@ -102,4 +100,3 @@ module.exports = {
   deleteComment,
   editComment,
 };
-

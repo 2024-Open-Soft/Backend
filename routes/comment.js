@@ -5,7 +5,7 @@ const {
   getComments,
   deleteComment,
   editComment,
-} = require("../controllers/commentController");
+} = require("../controllers/comment");
 const { isLoggedIn } = require("../middlewares");
 const { body } = require("express-validator");
 const { validate } = require("../utils/validator");
