@@ -5,7 +5,10 @@ const updateWatchlistController = async (req, res) => {
     const { movieId } = req.body;
     const user = req.user;
 
-    if (user.watchLater && user.watchLater.includes(movieId))
+    if(!user.watchLater) 
+      user.watchLater = [];
+
+    if (user.watchLater.includes(movieId))
       return res.status(400).json({ message: "already exists in watchlist" });
 
     await User.findByIdAndUpdate(user._id, {
