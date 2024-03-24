@@ -15,12 +15,12 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { email, phoneNumber, password } = req.body;
+        const { email = '', phoneNumber = '', password } = req.body;
         
         const user = await User.findOne({
             $or: [
-                { email },
-                { phoneNumber }
+                { phone: phoneNumber },
+                { email: email },
             ]
         });
 
