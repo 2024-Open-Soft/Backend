@@ -1,7 +1,8 @@
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
-const { JWT_SECRET } = process.env;
+
+const { generateJWT } = require("../utils/token");
+const jwtExpiryTime = 36000;
 
 const User = require("../models/user");
 
@@ -22,14 +23,14 @@ const loginUser = async (req, res) => {
       return res.status(401).send("Invalid credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).send("Invalid credentials");
     }
 
     const data = user.toObject();
-    const token = jwt.sign({ id: data._id }, JWT_SECRET);
+    const token = generateJWT({ id: data._id }, jwtExpiryTime);
     delete data.password;
 
     return res.json({

@@ -7,7 +7,7 @@ const {
   editComment,
 } = require("../controllers/commentController");
 const { isLoggedIn } = require("../middlewares");
-const { body, validationResult } = require("express-validator");
+const { body } = require("express-validator");
 const { validate } = require("../utils/validator");
 
 router.get("/:movieId", getComments);
