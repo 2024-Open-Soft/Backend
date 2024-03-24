@@ -1,19 +1,22 @@
-const bcrypt = require('bcryptjs');
-const { generateJWT } = require('../utils/token');
-const jwtExpiryTime = 36000; // JWT expiry time in seconds
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const { validationResult } = require("express-validator");
+const { JWT_SECRET } = process.env;
 
 const User = require("../models/user");
 
 const loginUser = async (req, res) => {
-    try {
-        const { email = '', phoneNumber = '', password } = req.body;
-        
-        const user = await User.findOne({
-            $or: [
-                { phone: phoneNumber },
-                { email: email },
-            ]
-        });
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, phoneNumber, password } = req.body;
+
+    const user = await User.findOne({
+      $or: [{ email }, { phoneNumber }],
+    });
 
     if (!user) {
       return res.status(401).send("Invalid credentials");
@@ -25,9 +28,9 @@ const loginUser = async (req, res) => {
       return res.status(401).send("Invalid credentials");
     }
 
-        const data = user.toObject();
-        const token = generateJWT({ id: data._id }, jwtExpiryTime);
-        delete data.password;
+    const data = user.toObject();
+    const token = jwt.sign({ id: data._id }, JWT_SECRET);
+    delete data.password;
 
     return res.json({
       message: "User logged in",
