@@ -7,7 +7,9 @@ function ref(name) {
 // nested collection
 const SubscriptionSchema = new Schema({
   plan: ref("SubscriptionPlan"),
+  orderId: String,
   paymentId: String,
+  razorpay_signature: String,
   status: {
     type: String,
     enum: ["TO_BE_PAID", "ACTIVE", "ON_HOLD", "EXPIRED", "PAYMENT_ERROR"],
