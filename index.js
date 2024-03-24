@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3001;
 // middlewares
 app.use(express.json());
 app.use(morgan("tiny"));
+app.use(require('cors')());
 
 const routes = require("./routes");
 
