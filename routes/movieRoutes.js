@@ -1,7 +1,6 @@
 const router = require("express").Router();
-const { body, header } = require("express-validator");
 
-const { isLoggedIn } = require("../middlewares");
+const { isLoggedIn } = require("../middleware");
 const {
   updateHistoryController,
   deleteHistoryController,
@@ -10,7 +9,8 @@ const {
   updateWatchlistController,
   deleteWatchlistController,
 } = require("../controllers/movieWatchlistController");
-const { validate } = require("../utils/validator");
+
+const { body, header, validationResult } = require("express-validator");
 
 router.post(
   "/history",
@@ -21,7 +21,14 @@ router.post(
       .isLength({ min: 5, max: 8 }),
     header("Authorization", "Authorization token is required").exists(),
   ],
-  validate,
+  (req, res, next) => {
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
   isLoggedIn,
   updateHistoryController,
 );
@@ -32,7 +39,14 @@ router.delete(
     body("movieId", "Movie Id required").exists(),
     header("Authorization", "Authorization token is required").exists(),
   ],
-  validate,
+  (req, res, next) => {
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
   isLoggedIn,
   deleteHistoryController,
 );
@@ -43,7 +57,14 @@ router.post(
     body("movieId", "Movie Id required").exists(),
     header("Authorization", "Authorization token is required").exists(),
   ],
-  validate,
+  (req, res, next) => {
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
   isLoggedIn,
   updateWatchlistController,
 );
@@ -54,7 +75,14 @@ router.delete(
     body("movieId", "Movie Id required").exists(),
     header("Authorization", "Authorization token is required").exists(),
   ],
-  validate,
+  (req, res, next) => {
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
   isLoggedIn,
   deleteWatchlistController,
 );

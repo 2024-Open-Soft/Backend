@@ -15,8 +15,10 @@ async function message({ to, body }) {
         process.env.TWILIO_MS_SID || "MG44d25b2065b170789541a1143718415f",
       to: `${to}`,
     });
+
+    console.log(message.sid);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
