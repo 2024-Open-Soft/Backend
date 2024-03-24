@@ -1,6 +1,6 @@
 const message = require("../utils/message");
 const sendingMail = require("../utils/mailer");
-const prisma = require("../prisma/index");
+const { User } = require("../models");
 const bcrypt = require("bcryptjs");
 
 const { generateJWT, parseToken } = require("../utils/token");
@@ -13,24 +13,21 @@ const generateOtpPhoneNumber = async (req) => {
     to: phone,
     body: `Your OTP is ${otp}`,
   });
+  console.log({ otp });
   const salt = await bcrypt.genSalt(10);
   otp = await bcrypt.hash(`${otp}`, salt);
   const token = generateJWT({ otp, phoneNumber: phone });
   console.log("Controller", token);
-  return token
-}
+  return token;
+};
 
 const generateOtpEmail = async (req) => {
   let otp = Math.floor(100000 + Math.random() * 900000);
   const email = req.body.email;
   const token = parseToken(req);
   const userId = token.userId;
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-  if(!user){
+  const user = await User.findById(userId);
+  if (!user) {
     return res.status(400).json({ message: "Mobile number not verified" });
   }
   sendingMail({
@@ -44,13 +41,13 @@ const generateOtpEmail = async (req) => {
   otp = await bcrypt.hash(`${otp}`, salt);
 
   const newToken = generateJWT({ otp, userId, email });
-  return newToken
-}
+  return newToken;
+};
 
 const generateOtp = async (req, res) => {
   try {
     const { email, phoneNumber } = req.body;
-    if(phoneNumber){
+    if (phoneNumber) {
       const token = await generateOtpPhoneNumber(req, res);
       console.log("Generated OTP", token);
       return res.status(200).json({
@@ -74,16 +71,12 @@ const generateOtp = async (req, res) => {
   }
 };
 
-const verifyOtpEmail = async req => {
+const verifyOtpEmail = async (req) => {
   const otp = parseInt(req.body.otp);
   const token = parseToken(req);
   const userId = token.userId;
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await User.findById(userId);
 
   if (!user) {
     return res.status(400).json({ message: "Invalid user" });
@@ -95,20 +88,18 @@ const verifyOtpEmail = async req => {
     return res.status(400).json({ message: "Invalid OTP" });
   }
 
-  const updatedUser = await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
+  const updatedUser = await User.updateOne(
+    { id: userId },
+    {
       email: token.email,
     },
-  });
+  );
 
   const newToken = generateJWT({ userId });
-  return newToken
-}
+  return newToken;
+};
 
-const verifyOtpPhoneNumber = async req => {
+const verifyOtpPhoneNumber = async (req) => {
   const otp = parseInt(req.body.otp);
   const token = parseToken(req);
 
@@ -116,37 +107,33 @@ const verifyOtpPhoneNumber = async req => {
   if (!isMatch) {
     return res.status(400).json({ message: "Invalid OTP" });
   }
-  const findUser = await prisma.user.findFirst({
-    where: {
-      phone: token.phoneNumber,
-    },
-  });
-  if(findUser){
-    if(findUser.password){
-      return { msg: "User already exists" }
-    }
-    const deletedUser = await prisma.user.delete({
-      where: {
-        id: findUser.id,
-      },
-    });
-  }
-  const user = await prisma.user.create({
-    data: {
-      phone: token.phoneNumber,
-    },
+  const findUser = await User.findOne({
+    phone: token.phoneNumber
   });
 
-  const newToken = generateJWT({ userId: user.id });
-  return { token: newToken }
-}
+
+  if (findUser) {
+    if (findUser.password) {
+      return { msg: "User already exists" };
+    }
+    const deletedUser = await User.deleteOne({
+      _id: findUser._id,
+    });
+  }
+  const user = await User.create({
+    phone: token.phoneNumber
+  });
+
+  const newToken = generateJWT({ userId: user._id });
+  return { token: newToken };
+};
 
 const verifyOtp = async (req, res) => {
   try {
     const token = parseToken(req);
-    if(token.phoneNumber){
+    if (token.phoneNumber) {
       const { token, msg } = await verifyOtpPhoneNumber(req, res);
-      if(msg){
+      if (msg) {
         return res.status(400).json({ message: msg });
       }
       return res.status(200).json({
@@ -168,10 +155,9 @@ const verifyOtp = async (req, res) => {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 module.exports = {
   generateOtp,
   verifyOtp,
 };
-

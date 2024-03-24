@@ -1,10 +1,10 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
 const { check, validationResult, oneOf } = require('express-validator');
-const prisma = new PrismaClient();
 const { JWT_SECRET } = process.env;
+
+const User = require('../models/user');
 
 
 const loginUser = async (req, res) => {
@@ -16,14 +16,12 @@ const loginUser = async (req, res) => {
         }
 
         const { email, phoneNumber, password } = req.body;
-
-        const user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email },
-                    { phone: phoneNumber }
-                ],
-            }
+        
+        const user = await User.findOne({
+            $or: [
+                { email },
+                { phoneNumber }
+            ]
         });
 
         if (!user) {
@@ -36,9 +34,18 @@ const loginUser = async (req, res) => {
             return res.status(401).send('Invalid credentials');
         }
 
-        const token = jwt.sign({ id: user.id }, JWT_SECRET);
-        const { password: pass, ...userWithoutPassword } = user;
-        res.json({ user: userWithoutPassword, token });
+        const data = user.toObject();
+        const token = jwt.sign({ id: data._id }, JWT_SECRET);
+        delete data.password;
+
+        return res.json({
+            message: "User logged in",
+            data: {
+                token,
+                user: data
+            }
+        });
+
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error');
