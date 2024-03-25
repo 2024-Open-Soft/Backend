@@ -43,7 +43,43 @@ const loginUser = async (req, res) => {
         console.error(err);
         res.status(500).send('Server error');
     }
+<<<<<<< Updated upstream
 }
+=======
+
+    const { email = '', phoneNumber = '', password } = req.body;
+
+    const user = await User.findOne({
+      $or: [{ phoneNumber }, {email}],
+    });
+
+    if (!user) {
+      return res.status(401).send("Invalid credentials");
+    }
+
+    const isPasswordValid = bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).send("Invalid credentials");
+    }
+
+    const data = user.toObject();
+    const token = generateJWT({ id: data._id }, jwtExpiryTime);
+    delete data.password;
+
+    return res.json({
+      message: "User logged in",
+      data: {
+        token,
+        user: data,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+};
+>>>>>>> Stashed changes
 
 module.exports = {
     loginUser
