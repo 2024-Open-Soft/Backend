@@ -13,11 +13,13 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, phoneNumber, password } = req.body;
+    const { phoneNumber, password } = req.body;
 
-    const user = await User.findOne({
-      $or: [{ email }, { phoneNumber }],
-    });
+    console.log(phoneNumber, password)
+
+    const user = await User.findOne({ phone: phoneNumber });
+
+    console.log(user)
 
     if (!user) {
       return res.status(401).send("Invalid credentials");

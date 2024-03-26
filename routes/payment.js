@@ -33,13 +33,13 @@ const { getPaymentLink, verification } = require("../controllers/payment");
 // ROUTE 3: getPaymentLink using: POST "/payment/getPaymentLink"
 router.post('/getPaymentLink',
     [
-        body("amount", "amount is requied").exists(),
-        body("currency", "currency is requied").exists(),
+        body("planID", "planID is requied").exists(),
+        body("duration", "duration is requied").exists(),
         // body("description", "description is requied").exists(),
-        body("customer", "customer is requied").exists(),
+        body("startDate", "startDate is requied").exists(),
     ],
     validate,
-    // isLoggedIn,
+    isLoggedIn,
     getPaymentLink
 )
 /* /payment/paymentSuccess?razorpay_payment_id=pay_NqcxXRevNRGkbs&razorpay_payment_link_id=plink_NqcvmPuDrYWqXd&razorpay_payment_link_reference_id=+df5xSJzW&razorpay_payment_link_status=paid&razorpay_signature=9cceaabd27068e36dfa31c63f62d2caa7866916ddfe7c7b5f5c858240f06cbd1    */

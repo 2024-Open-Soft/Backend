@@ -8,13 +8,18 @@ const { User } = require("../models");
 const generateOtp = async (req, res) => {
   try {
     const { email, phoneNumber } = req.body;
+    let new_token = null
 
     let otp = Math.floor(100000 + Math.random() * 900000);
+
     if (phoneNumber) {
       message({
         to: phoneNumber,
         body: `Your OTP is ${otp}`,
       });
+      const salt = await bcrypt.genSalt(10);
+      otp = await bcrypt.hash(`${otp}`, salt);
+      new_token = generateJWT({ otp, phoneNumber });
     } else {
       const token = parseToken(req);
       const userId = token.userId;
@@ -28,16 +33,15 @@ const generateOtp = async (req, res) => {
         subject: "OTP",
         text: `Your OTP is ${otp}`,
       });
+      const salt = await bcrypt.genSalt(10);
+      otp = await bcrypt.hash(`${otp}`, salt);
+      new_token = generateJWT({ otp, email, phoneNumber: user.phone, userId });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    otp = await bcrypt.hash(`${otp}`, salt);
-
-    const token = generateJWT({ otp, phoneNumber });
     return res.status(200).json({
       message: "OTP sent successfully",
       data: {
-        token: token,
+        token: new_token,
       },
     });
   } catch (error) {
@@ -50,6 +54,8 @@ const verifyOtp = async (req, res) => {
   try {
     const otp = parseInt(req.body.otp);
     const { phoneNumber, email, userId, otp: tokenOtp } = parseToken(req);
+
+    console.log(phoneNumber, email, userId, otp, tokenOtp)
 
     const isMatch = await bcrypt.compare(`${otp}`, tokenOtp);
     if (!isMatch) {
