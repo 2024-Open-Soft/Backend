@@ -10,6 +10,8 @@ const {
   updateWatchlistController,
   deleteWatchlistController,
 } = require("../controllers/movieWatchlistController");
+const { movieStreaming } = require("../controllers/movieStreaming");
+
 const { validate } = require("../utils/validator");
 
 router.post(
@@ -58,5 +60,8 @@ router.delete(
   isLoggedIn,
   deleteWatchlistController,
 );
+
+// add express validator to this route
+router.get('/watch/:movieId', movieStreaming);
 
 module.exports = router;

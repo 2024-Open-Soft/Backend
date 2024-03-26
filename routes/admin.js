@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const multer = require("multer")()
 const { body } = require("express-validator");
 
 const { isLoggedIn, isAdmin } = require("../middlewares");
@@ -7,6 +8,7 @@ const {
   getMovie,
   getAllMovies,
 } = require("../controllers/adminMovieController");
+const { videoUpload } = require("../controllers/adminUpload")
 const { deleteComment } = require("../controllers/adminCommentController");
 const { validate } = require("../utils/validator");
 
@@ -25,5 +27,7 @@ router.delete(
   deleteComment,
 );
 
+// Add express validator for the video upload route
+router.post("/upload", multer.single("file"), videoUpload);
 module.exports = router;
 
