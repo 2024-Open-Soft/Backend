@@ -21,7 +21,7 @@ router.post(
   validate,
 
   isLoggedIn,
-  createComment,
+  createComment
 );
 
 router.delete(
@@ -29,7 +29,7 @@ router.delete(
   body("commentId", "Comment Id required").exists(),
   validate,
   isLoggedIn,
-  deleteComment,
+  deleteComment
 );
 
 router.put(
@@ -40,7 +40,7 @@ router.put(
   ],
   validate,
   isLoggedIn,
-  editComment,
+  editComment
 );
 
 module.exports = router;

@@ -24,7 +24,7 @@ const register = async (req, res) => {
         name,
         password: hashedPassword,
       },
-      { new: true },
+      { new: true }
     );
 
     const user = updatedUser.toObject();
