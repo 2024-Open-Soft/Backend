@@ -12,6 +12,8 @@ const {
 } = require("../controllers/movieWatchlistController");
 const { validate } = require("../utils/validator");
 
+const { getMovies, getMovieById } = require("../controllers/movieController");
+
 router.post(
   "/history",
   [
@@ -58,5 +60,9 @@ router.delete(
   isLoggedIn,
   deleteWatchlistController,
 );
+
+router.get("/", getMovies);
+
+router.get("/:id", getMovieById);
 
 module.exports = router;

@@ -4,22 +4,23 @@ const message = require("../utils/message");
 const sendingMail = require("../utils/mailer");
 const { generateJWT, parseToken } = require("../utils/token");
 const { User } = require("../models");
+const { type } = require("os");
 
 const generateOtp = async (req, res) => {
   try {
-    const { email, phoneNumber } = req.body;
-    let new_token = null
+    const { email, phoneNumber } = req.body; // Get the email and phone number from the request body
 
-    let otp = Math.floor(100000 + Math.random() * 900000);
+    const payload = {};
 
+
+    let otp = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit OTP
+    // payload.otp = otp;
     if (phoneNumber) {
       message({
         to: phoneNumber,
         body: `Your OTP is ${otp}`,
       });
-      const salt = await bcrypt.genSalt(10);
-      otp = await bcrypt.hash(`${otp}`, salt);
-      new_token = generateJWT({ otp, phoneNumber });
+      payload.phoneNumber = phoneNumber; // Store the phone number in the payload
     } else {
       const token = parseToken(req);
       const userId = token.userId;
@@ -33,11 +34,13 @@ const generateOtp = async (req, res) => {
         subject: "OTP",
         text: `Your OTP is ${otp}`,
       });
-      const salt = await bcrypt.genSalt(10);
-      otp = await bcrypt.hash(`${otp}`, salt);
-      new_token = generateJWT({ otp, email, phoneNumber: user.phone, userId });
+      payload.email = email; // Store the email in the payload
+      payload.userId = userId;
     }
-
+    const salt = await bcrypt.genSalt(10);
+    otp = await bcrypt.hash(`${otp}`, salt);
+    payload.otp = otp;
+    const token = generateJWT(payload);
     return res.status(200).json({
       message: "OTP sent successfully",
       data: {
@@ -53,7 +56,9 @@ const generateOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     const otp = parseInt(req.body.otp);
-    const { phoneNumber, email, userId, otp: tokenOtp } = parseToken(req);
+    const { phoneNumber, email, otp: tokenOtp, userId } = parseToken(req);
+
+    const payload = {}
 
     console.log(phoneNumber, email, userId, otp, tokenOtp)
 
@@ -75,21 +80,29 @@ const verifyOtp = async (req, res) => {
         user = await User.create({
           phone: phoneNumber,
         });
+        payload.userId = user._id;
       }
     } else {
+      console.log("reached")
+      user = await User.findOne({
+        _id: userId,
+      });
+
+
       if (!user) {
         return res.status(400).json({ message: "Invalid user" });
       }
 
       user = await User.updateOne(
-        { id: userId },
+        { _id: userId },
         {
           email: email,
         },
       );
+      payload.userId = userId;
     }
 
-    const token = generateJWT({ userId: user._id });
+    const token = generateJWT(payload);
 
     return res.status(200).json({
       message: "OTP verified successfully",
@@ -102,6 +115,9 @@ const verifyOtp = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
 
 module.exports = {
   generateOtp,
