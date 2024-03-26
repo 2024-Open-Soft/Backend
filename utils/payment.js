@@ -3,6 +3,7 @@ const Razorpay = require('razorpay')
 const key_id = process.env.key_id
 const key_secret = process.env.key_secret
 
+
 // function to generate unix timestamp which is 30 minutes past the current time
 function getUnixTime() {
     const date = new Date();
@@ -32,7 +33,7 @@ const generatePaymentLink = async (referenceId, amount, currency, customer, plan
             sms: true,
             email: true
         },
-        reminder_enable: true,  // should it be enabled or not?
+        reminder_enable: true,
         options: {
             checkout: {
                 theme: {
@@ -45,4 +46,7 @@ const generatePaymentLink = async (referenceId, amount, currency, customer, plan
     return res
 };
 
-module.exports = { generatePaymentLink };
+
+module.exports = {
+    generatePaymentLink,
+};

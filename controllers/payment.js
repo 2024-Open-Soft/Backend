@@ -20,9 +20,11 @@ const getPaymentLink = async (req, res) => {
         // generate a unique reference id
         const referenceId = crypto.randomBytes(16).toString('hex');
 
+        // get the user details and generate the payment link
         const { name, email, phone } = req.user;
         const { id, short_url } = await generatePaymentLink(referenceId, amount, "INR", { name, contact: phone, email }, planID, req.user);
 
+        // storing the payment link details in the database
         req.user.subscriptions.push({ plan: plan, referenceId: referenceId, paylinkId: id, startDate: startDate, orignalDuration: duration });
         await User.findByIdAndUpdate(req.user._id, { subscriptions: req.user.subscriptions });
 
@@ -36,33 +38,43 @@ const getPaymentLink = async (req, res) => {
 
 
 const verification = async (req, res) => {
-    const SECRET = webhook_secret    // webhook secret
-    const razorpay_signature = req.headers['x-razorpay-signature']
+    try {
+        const SECRET = webhook_secret    // webhook secret
+        const razorpay_signature = req.headers['x-razorpay-signature'];
 
-    // generate HMAC from the request payload and the secret
-    const hmac = await crypto.createHmac('sha256', SECRET);
-    hmac.update(JSON.stringify(req.body));
-    const generated_signature = hmac.digest('hex');
+        // generate HMAC from the request payload and the secret
+        const hmac = await crypto.createHmac('sha256', SECRET);
+        hmac.update(JSON.stringify(req.body));
+        const generated_signature = hmac.digest('hex');
 
-    if (razorpay_signature === generated_signature) {
-        console.log({ success: true, message: "Payment has been verified", generated_signature, razorpay_signature })
+        const signatureIsValid = (generated_signature === razorpay_signature);
 
-        // storing the payment details in the database
-        const user_id = req.body.payload.payment.entity.notes.userID
-        const user = await User.findOne({ _id: user_id })
+        console.log({ signatureIsValid });
 
-        const subID = user.subscriptions.findIndex(sub => sub.referenceId === req.body.payload.payment.entity.notes.referenceId)
-        const subscriptions = [...user.subscriptions]
+        if (signatureIsValid) {
+            console.log({ success: true, message: "Payment has been verified" })
 
-        subscriptions[subID].status = req.body.payload.payment.entity.status
-        subscriptions[subID].paymentId = req.body.payload.payment.entity.id
-        subscriptions[subID].orderId = req.body.payload.payment.entity.order_id
-        subscriptions[subID].razorpay_signature = razorpay_signature
+            // storing the payment details in the database
+            const user_id = req.body.payload.payment.entity.notes.userID
+            const user = await User.findOne({ _id: user_id })
 
-        await User.findByIdAndUpdate(user_id, { subscriptions: subscriptions })
+            const subID = user.subscriptions.findIndex(sub => sub.referenceId === req.body.payload.payment.entity.notes.referenceId)
+            const subscriptions = [...user.subscriptions]
+
+            subscriptions[subID].status = req.body.payload.payment.entity.status
+            subscriptions[subID].paymentId = req.body.payload.payment.entity.id
+            subscriptions[subID].orderId = req.body.payload.payment.entity.order_id
+            subscriptions[subID].razorpay_signature = razorpay_signature
+
+            await User.findByIdAndUpdate(user_id, { subscriptions: subscriptions })
+        }
+        else {
+            console.log({ success: false, message: "Payment verification failed" })
+        }
     }
-    else {
-        console.log({ success: false, message: "Payment verification failed", generated_signature, razorpay_signature })
+    catch (error) {
+        console.log(error);
+        res.status(error.status).send(error.message);
     }
 
     res.json({ status: "ok" })  // need to send this response to the webhook or else razorpay will block the webhook
