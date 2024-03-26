@@ -18,7 +18,7 @@ exports.movieLatest = async (req, res, next) => {
             .sort({ released: -1 })
             .skip(skip)
             .limit(perPage)
-            // .select("title released");
+        // .select("title released");
         return res.status(200).json(movies);
     }
     catch (error) {
