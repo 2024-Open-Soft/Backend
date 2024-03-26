@@ -11,15 +11,13 @@ async function message({ to, body }) {
     const message = await client.messages.create({
       body: `${body}`,
       from: twilioNumber, // Twilio number
-      messagingServiceSid: process.env.TWILIO_MS_SID || 'MG44d25b2065b170789541a1143718415f',
+      messagingServiceSid:
+        process.env.TWILIO_MS_SID || "MG44d25b2065b170789541a1143718415f",
       to: `${to}`,
     });
-
-    console.log(message.sid);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
 module.exports = message;
-

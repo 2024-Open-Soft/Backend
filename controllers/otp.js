@@ -48,17 +48,14 @@ const generateOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    console.log("inside verify otp");
-
     const otp = parseInt(req.body.otp);
-    const { phoneNumber ='', email = '', userId, otp: tokenOtp } = parseToken(req);
+    const { phoneNumber, email, userId, otp: tokenOtp } = parseToken(req);
 
     const isMatch = await bcrypt.compare(`${otp}`, tokenOtp);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    console.log("during findOne");
     let user = await User.findOne({
       phone: phoneNumber,
     });
@@ -69,7 +66,6 @@ const verifyOtp = async (req, res) => {
       }
 
       if (!user) {
-        console.log("error here");
         user = await User.create({
           phone: phoneNumber,
         });

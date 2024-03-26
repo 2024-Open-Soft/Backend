@@ -1,17 +1,11 @@
 const { Movie } = require('../models');
 
-const getMovies = async (req, res) => {
+const getAllMovies = async (req, res) => {
     try {
         // paginatedResponse, take page number from query params and return 10 movies per page
         const page = req.query.page ? parseInt(req.query.page) : 1;
 
-        let movies = await Movie.find().skip((page - 1) * 10).limit(10);
-
-        // remove movieUrl from each movie object
-        movies = movies.map(movie => {
-            const { movieUrl, ...rest } = movie.toObject();
-            return rest;
-        });
+        const movies = await Movie.find().skip((page - 1) * 10).limit(10);
 
         return res.status(200).json({
             data: {
@@ -25,18 +19,15 @@ const getMovies = async (req, res) => {
     }
 }
 
-const getMovieById = async (req, res) => {
+const getMovie = async (req, res) => {
     try {
         const { id } = req.params;
 
-        let movie = await Movie.findById(id);
+        const movie = await Movie.findById(id);
 
         if (!movie) {
             return res.status(404).json({ message: "Movie not found" });
         }
-
-        // remove movieUrl from movie object
-        const { movieUrl, ...rest } = movie.toObject();
 
         return res.status(200).json({
             data: {
@@ -51,6 +42,6 @@ const getMovieById = async (req, res) => {
 }
 
 module.exports = {
-    getMovies,
-    getMovieById
+    getAllMovies,
+    getMovie
 };

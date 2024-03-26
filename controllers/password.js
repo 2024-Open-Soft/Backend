@@ -11,13 +11,13 @@ const forgotPassword = async (req, res) => {
             return res.status(400).json({ message: "User not found" });
         }
 
-        const token = generateJWT({ userId: user._id });
+        const token = generateJWT({ purpose: "reset-password", userId: user._id });
 
         sendingMail({
             from: "no-reply@example.com",
             to: email,
             subject: "Reset Password",
-            text: `Click here to reset your password: http://localhost:3000/reset/${token}`,
+            text: `Click here to reset your password: http://${process.env.BASE_URL}/reset/${token}`,
         });
         return res.status(200).json({ message: "Password reset link sent to your email" });
     } catch (error) {

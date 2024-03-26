@@ -10,10 +10,9 @@ const {
   updateWatchlistController,
   deleteWatchlistController,
 } = require("../controllers/movieWatchlistController");
-
-const { getAllMovies, getMovie } = require("../controllers/movieController");
-
 const { validate } = require("../utils/validator");
+
+const { getMovies, getMovieById } = require("../controllers/movieController");
 
 router.post(
   "/history",
@@ -62,8 +61,8 @@ router.delete(
   deleteWatchlistController,
 );
 
-router.get("/", getAllMovies);
+router.get("/", getMovies);
 
-router.get("/:id", getMovie);
+router.get("/:id", getMovieById);
 
 module.exports = router;

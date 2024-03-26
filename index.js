@@ -1,20 +1,32 @@
-const express = require('express')
-const app = express()
-const otpRoutes = require('./routes/otpRoutes')
-const register_routes = require('./routes/register_routes')
-const loginRoutes = require('./routes/loginRoutes');
-// const comment_routes = require('./routes/comment_route')
-const morgan = require('morgan')
+// imports
 require("dotenv").config();
-const PORT = 3001;
 
+const express = require("express");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
 
+// webserver init
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// middlewares
 app.use(express.json());
 app.use(morgan("tiny"));
-app.use('/user', register_routes);
-app.use('/user', loginRoutes);
-app.use("/otp", otpRoutes);
-// app.use('/movie', comment_routes);
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
+app.use(require('cors')());
+
+const routes = require("./routes");
+
+// routes
+for (let prefix in routes) {
+  app.use(`/${prefix}`, routes[prefix]);
+}
+
+async function main() {
+  await mongoose.connect(process.env.DATABASE_URL);
+  app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+    console.log(`Test on http://localhost:${PORT}/`);
+  });
+}
+
+main();

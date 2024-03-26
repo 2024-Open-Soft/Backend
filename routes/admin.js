@@ -6,8 +6,7 @@ const { getAllUsers, getUser } = require("../controllers/adminUserController");
 const {
   getMovie,
   getAllMovies,
-} = require("../controllers/movieController");
-
+} = require("../controllers/adminMovieController");
 const { deleteComment } = require("../controllers/adminCommentController");
 const { validate } = require("../utils/validator");
 

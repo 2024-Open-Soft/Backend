@@ -1,52 +1,45 @@
-const JWT_SECRET = process.env.JWT_SECRET;  // Get JWT secret from environment variables
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { parseToken } = require('../utils/token');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-const { validationResult } = require('express-validator');
-const jwtExpiryTime = 36000;  // JWT expiry time in seconds
+const bcrypt = require("bcryptjs");
 
+const { parseToken } = require("../utils/token");
+const { generateJWT } = require("../utils/token");
+const { User } = require("../models");
 
-const register = async (req, res) => {   // Register user controller
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { name, password } = req.body;  // Get name, password and token from request body
-        
-        const decoded = parseToken(req);  // Get user id from token
+const jwtExpiryTime = 36000;
 
-        const existingUser = await prisma.user.findUnique({  // Check if user already exists
-            where: {
-                id: decoded.userId
-            }
-        });
+const register = async (req, res) => {
+  try {
+    const { name, password } = req.body;
+    const decoded = parseToken(req);
 
-        if (!existingUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);  // Hash password
-
-        const updatedUser = await prisma.user.update({  // Update user
-            where: {
-                id: decoded.userId
-            },
-            data: {
-                name,
-                password: hashedPassword,
-            }
-        });
-        const newToken = jwt.sign({ id: updatedUser.id }, JWT_SECRET, { expiresIn: jwtExpiryTime });  // Generate new token or user id
-        res.json({ message: "User updated", data: { token: newToken, user: updatedUser } });  // Return token and user data
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Internal server error" });
+    if (!(await User.findById(decoded.userId))) {
+      return res.status(404).json({ message: "User not found" });
     }
-}
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      decoded.userId,
+      {
+        name,
+        password: hashedPassword,
+      },
+      { new: true },
+    );
+
+    const user = updatedUser.toObject();
+    delete user.password;
+
+    const token = generateJWT({ id: user._id }, jwtExpiryTime);
+
+    res.json({
+      message: "User updated",
+      data: { token, user },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = register;
-
