@@ -1,8 +1,8 @@
 const accountSid =
-  process.env.TWILIO_ACCOUNT_SID || "AC979bb523aaaaf7c718d49305aa5a11bc";
+  process.env.TWILIO_ACCOUNT_SID || "ACdf631cc348aaa62434760a4cca717fa3";
 const authToken =
-  process.env.TWILIO_AUTH_TOKEN || "2d66a444045e142ed31374fb7c475357";
-const twilioNumber = process.env.TWILIO_PHONE_NUMBER || "+12513179666";
+  process.env.TWILIO_AUTH_TOKEN || "691c4ff331d54bfa8ab55c274cd66f38";
+const twilioNumber = process.env.TWILIO_PHONE_NUMBER || "+19033002486";
 
 const client = require("twilio")(accountSid, authToken);
 
@@ -12,7 +12,7 @@ async function message({ to, body }) {
       body: `${body}`,
       from: twilioNumber, // Twilio number
       messagingServiceSid:
-        process.env.TWILIO_MS_SID || "MG44d25b2065b170789541a1143718415f",
+        process.env.TWILIO_MS_SID || "MGe71c0f53f63ef9b4dece4d9e167bfa42",
       to: `${to}`,
     });
   } catch (error) {
