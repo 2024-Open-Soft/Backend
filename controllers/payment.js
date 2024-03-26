@@ -74,7 +74,7 @@ const verification = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        res.status(error.status).send(error.message);
+        // res.status(error.status).send(error.message);
     }
 
     res.json({ status: "ok" })  // need to send this response to the webhook or else razorpay will block the webhook

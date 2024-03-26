@@ -24,7 +24,6 @@ router.post('/getPaymentLink',
 // need to update the webhook url in the razorpay dashboard: {domain}/payment/verification
 // ROUTE 2: verification using: POST "/payment/verification"
 router.post('/verification',
-    isLoggedIn,
     verification
 )
 
