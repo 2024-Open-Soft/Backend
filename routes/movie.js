@@ -10,6 +10,7 @@ const {
   updateWatchlistController,
   deleteWatchlistController,
 } = require("../controllers/movieWatchlistController");
+const { movieLatest, movieUpcoming } = require("../controllers/movieBrowseController");
 const { validate } = require("../utils/validator");
 
 router.post(
@@ -58,5 +59,16 @@ router.delete(
   isLoggedIn,
   deleteWatchlistController,
 );
+
+// add islogin later
+router.get(
+  "/latest/:page",
+  movieLatest
+)
+
+router.get(
+  "/upcoming/:page",
+  movieUpcoming
+)
 
 module.exports = router;
