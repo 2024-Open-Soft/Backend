@@ -1,5 +1,4 @@
 const Razorpay = require('razorpay')
-const crypto = require('crypto')
 
 const key_id = process.env.key_id
 const key_secret = process.env.key_secret
@@ -17,11 +16,6 @@ const generatePaymentLink = async (referenceId, amount, currency, customer, plan
         key_secret: key_secret,
     });
 
-    ///////////// console.log(amount, currency, customer, planID, user)
-    console.log(referenceId, amount, currency, customer, planID, user)
-
-
-
     const order = {
         amount: parseInt(amount) * 100,   // amount in smallest currency unit
         currency: currency,
@@ -36,23 +30,18 @@ const generatePaymentLink = async (referenceId, amount, currency, customer, plan
         reference_id: referenceId,    // need to be unique every time
         notify: {
             sms: true,
-            email: true,
-            whatsapp: true
+            email: true
         },
-        reminder_enable: true,
+        reminder_enable: true,  // should it be enabled or not?
         options: {
             checkout: {
                 theme: {
                     hide_topbar: true
                 }
             }
-        },
-        // callback_method: "get",
-        // callback_url: "http://localhost:3001/payment/paymentSuccess",
+        }
     }
-    //////////// console.log(order)
     const res = await razorpayInstance.paymentLink.create(order)
-    //////////// console.log(res)
     return res
 };
 
