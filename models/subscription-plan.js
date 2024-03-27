@@ -5,19 +5,29 @@ function ref(name) {
   return { type: Schema.Types.ObjectId, ref: name };
 }
 
+const SubscriptionFeatureSchema = new Schema(
+  {
+    name: String,
+    description: String,
+    value: String,
+  },
+  { timestamps: true },
+);
+
+
 const SubscriptionPlanSchema = new Schema(
   {
     name: String,
     price: Number,
     discountPercentage: Number,
-    features: [ref("SubscriptionFeature")],
+    features: [SubscriptionFeatureSchema],
     discount: Number,
   },
   { timestamps: true },
 );
 
 const SubscriptionPlan = mongoose.model(
-  "Subscription_Plan",
+  "SubscriptionPlan",
   SubscriptionPlanSchema,
 );
 

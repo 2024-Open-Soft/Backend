@@ -14,7 +14,7 @@ const generateOtp = async (req, res) => {
 
 
     let otp = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit OTP
-    // payload.otp = otp;
+
     if (phoneNumber) {
       message({
         to: phoneNumber,
@@ -81,11 +81,10 @@ const verifyOtp = async (req, res) => {
         payload.userId = user._id;
       }
     } else {
-      console.log("reached")
+
       user = await User.findOne({
         _id: userId,
       });
-
 
       if (!user) {
         return res.status(400).json({ message: "Invalid user" });

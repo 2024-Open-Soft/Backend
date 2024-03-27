@@ -21,6 +21,10 @@ for (let prefix in routes) {
   app.use(`/${prefix}`, routes[prefix]);
 }
 
+app.all('*', (req, res, next) => {
+  return res.status(404).json({ message: `Can't find ${req.url} on the server` })
+});
+
 async function main() {
   await mongoose.connect(process.env.DATABASE_URL);
   app.listen(PORT, () => {
