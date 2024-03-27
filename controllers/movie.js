@@ -25,7 +25,7 @@ const getMovies = async (req, res) => {
     }
 }
 
-const getMovieById = async (req, res) => {
+const getMovie = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -51,7 +51,7 @@ const getMovieById = async (req, res) => {
 }
 
 const getLatestMovies = async (req, res) => {
-    const page = req.query.page;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
     const perPage = 50;
 
     if (page < 1) return res.status(400).json({ message: "Invalid page requested", data: {} });
@@ -69,7 +69,7 @@ const getLatestMovies = async (req, res) => {
             .skip(skip)
             .limit(perPage)
         // .select("title released");
-        return res.status(200).json(movies);
+        return res.status(200).json({ message: "Latest movies fetched", data: movies });
     }
     catch (error) {
         return res.status(500).json({ message: "Interval server error" });
@@ -88,7 +88,7 @@ const getUpcomingMovies = async (req, res) => {
         const totalResults = await Movie.find({ released: { $gt: new Date() } }).countDocuments();
         const totalPage = Math.floor((totalResults + perPage - 1) / perPage);
 
-        if (page > totalPage) return res.status(400).json({ message: "Invalid page requested", data: {} });
+        if (totalPage !==0 && page > totalPage) return res.status(400).json({ message: "Invalid page requested", data: {} });
 
         const movies = await Movie.find({ released: { $gt: new Date() } })
             .sort({ released: 1 })
@@ -96,7 +96,7 @@ const getUpcomingMovies = async (req, res) => {
             .limit(perPage)
         // .select("title released");
 
-        return res.status(200).json(movies);
+        return res.status(200).json({ message: "Upcoming movies fetched", data: movies });
     }
     catch (error) {
         return res.status(500).json({ message: "Interval server error" });
@@ -105,7 +105,7 @@ const getUpcomingMovies = async (req, res) => {
 
 module.exports = {
     getMovies,
-    getMovieById,
+    getMovie,
     getLatestMovies,
     getUpcomingMovies
 };
