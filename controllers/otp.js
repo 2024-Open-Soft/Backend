@@ -44,7 +44,7 @@ const generateOtp = async (req, res) => {
     return res.status(200).json({
       message: "OTP sent successfully",
       data: {
-        token: new_token,
+        token: token,
       },
     });
   } catch (error) {
