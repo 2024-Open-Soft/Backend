@@ -10,6 +10,7 @@ const register = async (req, res) => {
   try {
     const { name, password } = req.body;
     const decoded = parseToken(req);
+    console.log(decoded);
 
     if (!(await User.findById(decoded.userId))) {
       return res.status(404).json({ message: "User not found" });

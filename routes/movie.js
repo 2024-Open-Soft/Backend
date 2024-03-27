@@ -13,6 +13,8 @@ const {
 const { movieLatest, movieUpcoming } = require("../controllers/movieBrowseController");
 const { validate } = require("../utils/validator");
 
+const { getMovies, getMovieById } = require("../controllers/movieController");
+
 router.post(
   "/history",
   [
@@ -60,16 +62,18 @@ router.delete(
   deleteWatchlistController,
 );
 
-// add islogin ?????
 router.get(
   "/latest/:page",
   movieLatest
 )
 
-// add islogin ?????
 router.get(
   "/upcoming/:page",
   movieUpcoming
 )
+
+router.get("/", getMovies);
+
+router.get("/:id", getMovieById);
 
 module.exports = router;
