@@ -60,8 +60,6 @@ const verifyOtp = async (req, res) => {
 
     const payload = {}
 
-    console.log(phoneNumber, email, userId, otp, tokenOtp)
-
     const isMatch = await bcrypt.compare(`${otp}`, tokenOtp);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid OTP" });
