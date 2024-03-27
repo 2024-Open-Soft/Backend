@@ -4,9 +4,7 @@ const { performance } = require("perf_hooks");
 
 const autocomplete = async (req, res) => {
   try {
-    let { query } = req.body;
-
-    // Preprocess query (replace consecutive spaces, escape regex characters)
+    let { query } = req.query;
     query = query.replace(/\s+/g, " ").trim();
     queryForRegex = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 
@@ -133,6 +131,7 @@ const autocomplete = async (req, res) => {
       data: {
         movies: finalMovies,
         count: finalMovies.length,
+        tabComplete: regexSearchCount > 0 ? movies2[0].title : null,
       },
     });
   } catch (error) {
