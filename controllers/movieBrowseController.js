@@ -19,10 +19,10 @@ exports.movieLatest = async (req, res, next) => {
             .skip(skip)
             .limit(perPage)
         // .select("title released");
-        return res.status(200).json(movies);
+        return res.status(200).json({ message: "Latest movies", data: movies });
     }
     catch (error) {
-        return res.status(500).json({ message: "Interval server error" });
+        return res.status(500).json({ message: "Interval server error", data: {} });
     }
 }
 
@@ -46,9 +46,9 @@ exports.movieUpcoming = async (req, res, next) => {
             .limit(perPage)
         // .select("title released");
 
-        return res.status(200).json(movies);
+        return res.status(200).json({ message: "Upcoming movies", data: movies });
     }
     catch (error) {
-        return res.status(500).json({ message: "Interval server error" });
+        return res.status(500).json({ message: "Interval server error", data: {} });
     }
 }
