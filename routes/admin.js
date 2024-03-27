@@ -2,12 +2,12 @@ const router = require("express").Router();
 const { body } = require("express-validator");
 
 const { isLoggedIn, isAdmin } = require("../middlewares");
-const { getAllUsers, getUser } = require("../controllers/adminUserController");
+const { getAllUsers, getUser } = require("../controllers/admin-user");
 const {
   getMovie,
   getAllMovies,
-} = require("../controllers/adminMovieController");
-const { deleteComment } = require("../controllers/adminCommentController");
+} = require("../controllers/admin-movie");
+const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
 
 router.get("/user", isLoggedIn, isAdmin, getAllUsers);

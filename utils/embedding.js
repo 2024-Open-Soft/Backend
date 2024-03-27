@@ -1,4 +1,5 @@
 const axios = require("axios");
+
 async function getEmbedding(query) {
   // Define the OpenAI API url and key.
   const url = 'https://api.openai.com/v1/embeddings';

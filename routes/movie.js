@@ -5,14 +5,14 @@ const { isLoggedIn } = require("../middlewares");
 const {
   updateHistoryController,
   deleteHistoryController,
-} = require("../controllers/movieHistoryController");
+} = require("../controllers/history");
 const {
   updateWatchlistController,
   deleteWatchlistController,
-} = require("../controllers/movieWatchlistController");
+} = require("../controllers/watchlist");
 const { validate } = require("../utils/validator");
 
-const { getMovies, getMovieById } = require("../controllers/movieController");
+const { getMovies, getMovieById } = require("../controllers/movie");
 
 router.post(
   "/history",
