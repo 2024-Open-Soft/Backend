@@ -3,6 +3,7 @@ const comment = require("./comment");
 const movie = require("./movie");
 const otp = require("./otp");
 const user = require("./user");
+const search = require("./search");
 const password = require("./password");
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
   movie,
   otp,
   user,
+  search,
   password,
 };
