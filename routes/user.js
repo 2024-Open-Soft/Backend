@@ -5,7 +5,7 @@ const { isLoggedIn } = require("../middlewares");
 const { getProfile, updateProfile } = require("../controllers/user");
 const register = require("../controllers/register");
 const { loginUser } = require("../controllers/login");
-const { userSubscription } = require('../controllers/userSubscriptionController');
+const { userSubscription } = require('../controllers/plansController');
 const { validate } = require("../utils/validator");
 
 router.post(
@@ -39,7 +39,5 @@ router.post(
 router.get("/profile", isLoggedIn, getProfile);
 
 router.put("/profile", isLoggedIn, updateProfile);
-
-router.get("/plans", userSubscription);
 
 module.exports = router;
