@@ -12,7 +12,9 @@ const {
 } = require("../controllers/watchlist");
 const { validate } = require("../utils/validator");
 
-const { getMovies, getMovieById, getLatestMovies, getUpcomingMovies } = require("../controllers/movie");
+const { getMovies, getMovieById, getLatestMovies, getUpcomingMovies, getfeaturedMovie } = require("../controllers/movie");
+
+
 
 router.post(
   "/history",
@@ -68,5 +70,7 @@ router.get("/:id", getMovieById);
 router.get("/latest", getLatestMovies);
 
 router.get("/upcoming", getUpcomingMovies);
+
+// router.get("/featured", getfeaturedMovie);
 
 module.exports = router;

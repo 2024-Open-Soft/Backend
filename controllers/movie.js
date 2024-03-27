@@ -29,6 +29,8 @@ const getMovieById = async (req, res) => {
     try {
         const { id } = req.params;
 
+        console.log(id);
+
         let movie = await Movie.findById(id);
 
         if (!movie) {
@@ -103,9 +105,22 @@ const getUpcomingMovies = async (req, res) => {
     }
 }
 
+const getfeaturedMovie = async (req, res) => {
+    try {
+        const featuredMovies = await Movie.find({ isfeatured: true });
+        // console.log(answer);
+        return res.status(200).json(featuredMovies);
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Interval server error" });
+    }
+}
+
 module.exports = {
     getMovies,
     getMovieById,
     getLatestMovies,
-    getUpcomingMovies
+    getUpcomingMovies,
+    getfeaturedMovie,
 };
