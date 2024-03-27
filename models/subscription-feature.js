@@ -11,7 +11,7 @@ const SubscriptionFeatureSchema = new Schema(
 );
 
 const SubscriptionFeatures = mongoose.model(
-  "Subscription_Feature",
+  "SubscriptionFeature",
   SubscriptionFeatureSchema,
 );
 

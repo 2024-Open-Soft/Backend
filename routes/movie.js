@@ -10,6 +10,7 @@ const {
   updateWatchlistController,
   deleteWatchlistController,
 } = require("../controllers/movieWatchlistController");
+const { movieLatest, movieUpcoming } = require("../controllers/movieBrowseController");
 const { validate } = require("../utils/validator");
 
 const { getMovies, getMovieById } = require("../controllers/movieController");
@@ -60,6 +61,16 @@ router.delete(
   isLoggedIn,
   deleteWatchlistController,
 );
+
+router.get(
+  "/latest/:page",
+  movieLatest
+)
+
+router.get(
+  "/upcoming/:page",
+  movieUpcoming
+)
 
 router.get("/", getMovies);
 

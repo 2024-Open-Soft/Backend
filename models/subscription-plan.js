@@ -17,7 +17,7 @@ const SubscriptionPlanSchema = new Schema(
 );
 
 const SubscriptionPlan = mongoose.model(
-  "Subscription_Plan",
+  "SubscriptionPlan",
   SubscriptionPlanSchema,
 );
 
