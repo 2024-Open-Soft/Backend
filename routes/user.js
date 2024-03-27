@@ -5,7 +5,6 @@ const { isLoggedIn } = require("../middlewares");
 const { getProfile, updateProfile } = require("../controllers/user");
 const register = require("../controllers/register");
 const { loginUser } = require("../controllers/login");
-const { userSubscription } = require('../controllers/plansController');
 const { validate } = require("../utils/validator");
 
 router.post(
