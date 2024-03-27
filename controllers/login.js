@@ -21,12 +21,13 @@ const loginUser = async (req, res) => {
       phone: phoneNumber,
     });
 
-    console.log(user);
     if (!user) {
-      return res.status(401).send("Invalid credentials");
+      return res.status(401).send("User Not Found");
     }
 
-    const isPasswordValid = bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
       return res.status(401).send("Invalid credentials");
