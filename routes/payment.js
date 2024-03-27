@@ -8,7 +8,7 @@ const { getPaymentLink, verification } = require("../controllers/payment");
 
 
 // ROUTE 1: getPaymentLink using: POST "/payment/getPaymentLink"
-router.post('/getPaymentLink',
+router.post('/link',
     [
         body("planID", "planID is requied").exists(),
         body("duration", "duration is requied").exists(),
