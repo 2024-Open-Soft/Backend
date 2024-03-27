@@ -5,6 +5,7 @@ const otp = require("./otp");
 const user = require("./user");
 const search = require("./search");
 const password = require("./password");
+const payment = require("./payment");
 
 module.exports = {
   admin,
@@ -14,4 +15,5 @@ module.exports = {
   user,
   search,
   password,
+  payment,
 };
