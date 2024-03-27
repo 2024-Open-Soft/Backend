@@ -4,6 +4,7 @@ const movie = require("./movie");
 const otp = require("./otp");
 const user = require("./user");
 const search = require("./search");
+const password = require("./password");
 
 module.exports = {
   admin,
@@ -12,4 +13,5 @@ module.exports = {
   otp,
   user,
   search,
+  password,
 };
