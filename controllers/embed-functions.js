@@ -19,17 +19,23 @@ async function getEmbedding(query, upto, key) {
     throw error; // Re-throw the error for further handling
   }
 }
-async function findSimilarDocuments(embedding) {
+async function findSimilarDocuments(embedding, limit, page) {
   try {
     const movies = await Movie.aggregate([
       {
         $vectorSearch: {
-          "index": "vector_index",
-          "path": "plot_embedding",
-          "queryVector": embedding,
-          "numCandidates": 100,
-          "limit": 5,
+          index: "vector_index",
+          path: "plot_embedding",
+          queryVector: embedding,
+          numCandidates: 500,
+          limit: 100,
         },
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
       },
       {
         $project: {
