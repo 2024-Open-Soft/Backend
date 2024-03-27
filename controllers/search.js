@@ -3,7 +3,7 @@ const Movie = require("../models/movie");
 const searchOnEnter = async (req, res) => {
   try {
     // setpage to 1 and flag to default 0 if not provided
-    let { query, page = 1, flag = 0 } = req.body;
+    let { query, page = 1, flag = 0 } = req.query;
     const pageSize = 25;
     let movies = [];
     page = parseInt(page);

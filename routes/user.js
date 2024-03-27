@@ -14,25 +14,22 @@ router.post(
     body("password", "Password length should be atleast 8 characters").isLength(
       {
         min: 8,
-      },
+      }
     ),
     header("Authorization", "Token is required").exists(),
   ],
   validate,
-  register,
+  register
 );
 
 router.post(
   "/login",
   [
     body("password").notEmpty().withMessage("Password is required"),
-    oneOf(
-      [body("phoneNumber").isMobilePhone()],
-      "Phone number is required",
-    ),
+    oneOf([body("phoneNumber").isMobilePhone()], "Phone number is required"),
   ],
   validate,
-  loginUser,
+  loginUser
 );
 
 router.get("/profile", isLoggedIn, getProfile);

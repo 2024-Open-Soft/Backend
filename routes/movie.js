@@ -15,6 +15,7 @@ const { validate } = require("../utils/validator");
 const { getMovies, getMovieById, getLatestMovies, getUpcomingMovies, getfeaturedMovie } = require("../controllers/movie");
 
 
+const { getMovies, getMovie, getLatestMovies, getUpcomingMovies } = require("../controllers/movie");
 
 router.post(
   "/history",
@@ -65,12 +66,11 @@ router.delete(
 
 router.get("/", getMovies);
 
-router.get("/:id", getMovieById);
-
 router.get("/latest", getLatestMovies);
 
 router.get("/upcoming", getUpcomingMovies);
 
 // router.get("/featured", getfeaturedMovie);
+router.get("/:id", getMovie);
 
 module.exports = router;
