@@ -77,7 +77,7 @@ const autocomplete = async (req, res) => {
     let finalMovies = movies2;
     let mergedCount = movies2.length;
     // console.log("regex movies length", movies2.length);
-    const movie2Ids = movies2.map((movie) => movie._id.toString()); 
+    const movie2Ids = movies2.map((movie) => movie._id.toString());
     for (let i = 0; i < movies1.length && mergedCount < 15; i++) {
       const movie = movies1[i];
       if (!movie2Ids.includes(movie._id.toString())) {
@@ -90,7 +90,9 @@ const autocomplete = async (req, res) => {
 
     let totalRuntime = performance.now() - totalTime;
 
-    const workbook = await xlsx.fromFileAsync("opensoft-autocomplete-results.xlsx");
+    const workbook = await xlsx.fromFileAsync(
+      "opensoft-autocomplete-results.xlsx"
+    );
     const sheet = workbook.sheet("Sheet1");
 
     sheet.cell("A1").value("Query");
