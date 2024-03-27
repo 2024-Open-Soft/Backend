@@ -1,4 +1,4 @@
-const { Movie } = require('../models');
+const { User, Movie, Comment } = require('../models');
 
 const getMovies = async (req, res) => {
     try {
@@ -35,12 +35,30 @@ const getMovie = async (req, res) => {
             return res.status(404).json({ message: "Movie not found" });
         }
 
+        let comments = await Comment.find({ movie: movie._id });
+
+        if (!comments) {
+            comments = [];
+        }
+
+        comments = await Promise.all(comments.map(async (comment) => {
+            let user = await User.findById(comment.user);
+            user = user?.toObject();
+            user = { name: user?.name, email: user?.email };
+
+            return {
+                ...comment.toObject(),
+                user
+            };
+        }));
+
         // remove movieUrl from movie object
         const { movieUrl, ...rest } = movie.toObject();
 
         return res.status(200).json({
             data: {
-                movie
+                movie: rest,
+                comments
             }
         });
     }
