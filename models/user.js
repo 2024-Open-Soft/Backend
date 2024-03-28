@@ -39,6 +39,7 @@ const UserSchema = new Schema(
     name: String,
     email: String,
     password: String,
+    countryCode: String,
     phone: {
       type: String,
       required: true,
@@ -58,7 +59,7 @@ const UserSchema = new Schema(
     payments: [PaymentSchema],
     subscriptions: [SubscriptionSchema],
     tokens: [{ type: String, default: [] }],
-    ips: { type: String, default: [] },
+    ips: { type: [String], default: [] },
   },
   { timestamps: true },
 );
