@@ -8,7 +8,7 @@ const { type } = require("os");
 
 const generateOtp = async (req, res) => {
   try {
-    const { email, phoneNumber } = req.body; // Get the email and phone number from the request body
+    const { email, phoneNumber, countryCode } = req.body; // Get the email and phone number from the request body
 
     const payload = {};
 
@@ -21,6 +21,7 @@ const generateOtp = async (req, res) => {
         body: `Your OTP is ${otp}`,
       });
       payload.phoneNumber = phoneNumber; // Store the phone number in the payload
+      payload.countryCode = countryCode;
     } else {
       const token = parseToken(req);
       const userId = token.userId;
@@ -56,7 +57,7 @@ const generateOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     const otp = parseInt(req.body.otp);
-    const { phoneNumber, email, otp: tokenOtp, userId } = parseToken(req);
+    const { phoneNumber, countryCode, email, otp: tokenOtp, userId } = parseToken(req);
 
     const payload = {}
 
@@ -77,6 +78,7 @@ const verifyOtp = async (req, res) => {
       if (!user) {
         user = await User.create({
           phone: phoneNumber,
+          countryCode: countryCode,
         });
         payload.userId = user._id;
       }
