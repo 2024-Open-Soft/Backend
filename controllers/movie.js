@@ -46,7 +46,7 @@ const getMovie = async (req, res) => {
         comments = await Promise.all(comments.map(async (comment) => {
             let user = await User.findById(comment.user);
             user = user?.toObject();
-            user = { name: user?.name, email: user?.email };
+            user = { name: user?.name, email: user?.email, user_id: user?._id };
 
             return {
                 ...comment.toObject(),
