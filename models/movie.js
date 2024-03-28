@@ -68,6 +68,7 @@ const MovieSchema = new Schema({
   writers: [String],
   year: Number,
   comments: [ref("Comment")],
+  trailerUrl: String,
 });
 
 const Movie = mongoose.model("Movie", MovieSchema);
