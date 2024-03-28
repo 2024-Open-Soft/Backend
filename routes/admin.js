@@ -6,6 +6,7 @@ const { getAllUsers, getUser } = require("../controllers/admin-user");
 const {
   getMovie,
   getAllMovies,
+  uploadmovie
 } = require("../controllers/admin-movie");
 const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
@@ -27,8 +28,17 @@ router.delete(
 );
 
 router.post(
+  "/uploadmovie",
+  validate,
+  isLoggedIn,
+  isAdmin,
+  uploadmovie
+)
+
+
+router.post(
   "/plan",
-  isLoggedIn, isAdmin, 
+  isLoggedIn, isAdmin,
   createSubscriptionPlan
 )
 
