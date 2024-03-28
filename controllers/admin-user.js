@@ -21,7 +21,7 @@ const getAllUsers = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 
@@ -32,7 +32,7 @@ const getUser = async (req, res) => {
         const user = await User.findById(id);
 
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ error: "User not found" });
         }
 
         // remove password
@@ -46,7 +46,7 @@ const getUser = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 

@@ -4,7 +4,7 @@ const { body, header, oneOf } = require("express-validator");
 const { isLoggedIn } = require("../middlewares");
 const { getProfile, updateProfile } = require("../controllers/user");
 const register = require("../controllers/register");
-const { loginUser } = require("../controllers/login");
+const { loginUser, logoutUser } = require("../controllers/login");
 const { validate } = require("../utils/validator");
 
 router.post(
@@ -31,6 +31,8 @@ router.post(
   validate,
   loginUser
 );
+
+router.get("/logout", isLoggedIn, logoutUser);
 
 router.get("/profile", isLoggedIn, getProfile);
 

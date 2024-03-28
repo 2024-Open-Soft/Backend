@@ -10,10 +10,9 @@ const register = async (req, res) => {
   try {
     const { name, password } = req.body;
     const decoded = parseToken(req);
-    console.log(decoded);
 
     if (!(await User.findById(decoded.userId))) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -39,7 +38,7 @@ const register = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

@@ -21,7 +21,7 @@ const getMovies = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 
@@ -34,7 +34,7 @@ const getMovie = async (req, res) => {
         let movie = await Movie.findById(id);
 
         if (!movie) {
-            return res.status(404).json({ message: "Movie not found" });
+            return res.status(404).json({ error: "Movie not found" });
         }
 
         let comments = await Comment.find({ movie: movie._id });
@@ -66,7 +66,7 @@ const getMovie = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 
@@ -92,7 +92,7 @@ const getLatestMovies = async (req, res) => {
         return res.status(200).json({ message: "Latest movies fetched", data: movies });
     }
     catch (error) {
-        return res.status(500).json({ message: "Interval server error" });
+        return res.status(500).json({ error: "Interval server error" });
     }
 }
 
@@ -100,7 +100,7 @@ const getUpcomingMovies = async (req, res) => {
     const page = req.query.page;
     const perPage = 50;
 
-    if (page < 1) return res.status(400).json({ message: "Invalid page requested", data: {} });
+    if (page < 1) return res.status(400).json({ error: "Invalid page requested", data: {} });
 
     const skip = (page - 1) * perPage;
 
@@ -119,7 +119,7 @@ const getUpcomingMovies = async (req, res) => {
         return res.status(200).json({ message: "Upcoming movies fetched", data: movies });
     }
     catch (error) {
-        return res.status(500).json({ message: "Interval server error" });
+        return res.status(500).json({ error: "Interval server error" });
     }
 }
 
@@ -131,7 +131,7 @@ const getfeaturedMovie = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Interval server error" });
+        return res.status(500).json({ error: "Interval server error" });
     }
 }
 

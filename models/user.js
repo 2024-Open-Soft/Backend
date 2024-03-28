@@ -45,6 +45,8 @@ const UserSchema = new Schema(
     comments: [ref("Comment")],
     transactions: [String],
     subscriptions: [SubscriptionSchema],
+    tokens: [{ type: String, default: [] }],
+    maxTokens: { type: Number, default: 1 },
   },
   { timestamps: true },
 );

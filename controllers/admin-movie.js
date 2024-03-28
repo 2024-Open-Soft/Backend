@@ -15,7 +15,7 @@ const getAllMovies = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 
@@ -26,7 +26,7 @@ const getMovie = async (req, res) => {
         const movie = await Movie.findById(id);
 
         if (!movie) {
-            return res.status(404).json({ message: "Movie not found" });
+            return res.status(404).json({ error: "Movie not found" });
         }
 
         return res.status(200).json({
@@ -37,7 +37,7 @@ const getMovie = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 

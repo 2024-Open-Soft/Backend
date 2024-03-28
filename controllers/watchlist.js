@@ -5,11 +5,11 @@ const updateWatchlistController = async (req, res) => {
     const { movieId } = req.body;
     const user = req.user;
 
-    if(!user.watchLater) 
+    if (!user.watchLater)
       user.watchLater = [];
 
     if (user.watchLater.includes(movieId))
-      return res.status(400).json({ message: "already exists in watchlist" });
+      return res.status(400).json({ error: "already exists in watchlist" });
 
     await User.findByIdAndUpdate(user._id, {
       $push: { watchLater: movieId },
@@ -18,7 +18,7 @@ const updateWatchlistController = async (req, res) => {
     return res.status(200).json({ message: "Watchlist updated" });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -29,7 +29,7 @@ const deleteWatchlistController = async (req, res) => {
     const user = req.user;
 
     if (!user.watchLater.includes(movieId))
-      return res.status(400).json({ message: "does not exist in watchlist" });
+      return res.status(400).json({ error: "Does not exist in watchlist" });
 
     await User.findByIdAndUpdate(user._id, {
       $pull: { watchLater: movieId },
@@ -38,7 +38,7 @@ const deleteWatchlistController = async (req, res) => {
     return res.status(200).json({ message: "Watchlist updated" });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 

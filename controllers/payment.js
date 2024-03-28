@@ -32,7 +32,7 @@ const getPaymentLink = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        res.status(error.status).send(error.message);
+        res.status(error.status).send({ error: "Internal server error"});
     }
 }
 
@@ -52,7 +52,6 @@ const verification = async (req, res) => {
         console.log({ signatureIsValid });
 
         if (signatureIsValid) {
-            console.log({ success: true, message: "Payment has been verified" })
 
             // storing the payment details in the database
             const user_id = req.body.payload.payment.entity.notes.userID

@@ -8,7 +8,7 @@ const forgotPassword = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(400).json({ error: "User not found" });
         }
 
         const token = generateJWT({ purpose: "reset-password", userId: user._id });
@@ -22,7 +22,7 @@ const forgotPassword = async (req, res) => {
         return res.status(200).json({ message: "Password reset link sent to your email" });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 
@@ -39,7 +39,7 @@ const resetPassword = async (req, res) => {
         return res.status(200).json({ message: "Password reset successfully" });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }
 
