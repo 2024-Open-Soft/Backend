@@ -49,7 +49,7 @@ const generateOtp = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -62,7 +62,7 @@ const verifyOtp = async (req, res) => {
 
     const isMatch = await bcrypt.compare(`${otp}`, tokenOtp);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid OTP" });
+      return res.status(400).json({ error: "Invalid OTP" });
     }
 
     let user = await User.findOne({
@@ -71,7 +71,7 @@ const verifyOtp = async (req, res) => {
 
     if (phoneNumber) {
       if (user && user.password) {
-        return res.status(400).json({ message: "User already exists" });
+        return res.status(400).json({ error: "User already exists" });
       }
 
       if (!user) {
@@ -87,7 +87,7 @@ const verifyOtp = async (req, res) => {
       });
 
       if (!user) {
-        return res.status(400).json({ message: "Invalid user" });
+        return res.status(400).json({ error: "Invalid user" });
       }
 
       user = await User.updateOne(
@@ -109,7 +109,7 @@ const verifyOtp = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 

@@ -1,39 +1,21 @@
-const { User, Movie, Comment } = require("../models");
+const { User, Movie, Comment, SubscriptionPlan } = require("../models");
 
 const bcrypt = require("bcryptjs");
+const { createUserObject } = require("../utils/user");
+const { getActiveSubscriptionPlan } = require("../utils/subscription");
 
 const getProfile = async (req, res) => {
   try {
-    let user = req.user;
+    const user = req.user;
 
-    const watchLater = [], history = [], comments = [];
+    const data = await createUserObject(user);
+    const { activeSubscription, maxDevices } = await getActiveSubscriptionPlan(user);
 
-    for (let i in user.watchLater) {
-      console.log(i)
-      // user.watchLater[i] = await Movie.findById(user.watchLater[i]);
-      watchLater[i] = await Movie.findById(user.watchLater[i]);
-    }
-
-    for (let i in user.history) {
-      history[i] = { movie: user.history[i].movie, timeStamp: user.history[i].timeStamp };
-      history[i].movie = await Movie.findById(user.history[i].movie);
-    }
-
-    for (let i in user.comments) {
-      comments[i] = await Comment.findById(user.comments[i]);
-    }
-
-    return res.status(200).json({
-      message: "Profile fetched successfully",
-      data: {
-        user: {
-          ...user.toObject(),
-          watchLater,
-          history,
-          comments,
-        }
-      },
+    return res.json({
+      message: "User Details Fetched",
+      data: { ...data, activeSubscription: activeSubscription }
     });
+
   } catch (error) {
     return res.status(400).json({ error: "Error fetching profile" });
   }

@@ -47,6 +47,10 @@ const MovieSchema = new Schema({
   directors: [String],
   fullplot: String,
   genres: [String],
+  isfeatured: {
+    type: Boolean,
+    default: false,
+  },
   imdb: ImdbSchema,
   languages: [String],
   lastupdated: String,
@@ -64,6 +68,7 @@ const MovieSchema = new Schema({
   writers: [String],
   year: Number,
   comments: [ref("Comment")],
+  trailerUrl: String,
 });
 
 const Movie = mongoose.model("Movie", MovieSchema);

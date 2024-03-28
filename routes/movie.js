@@ -12,7 +12,13 @@ const {
 } = require("../controllers/watchlist");
 const { validate } = require("../utils/validator");
 
-const { getMovies, getMovie, getLatestMovies, getUpcomingMovies } = require("../controllers/movie");
+const {
+  getMovies,
+  getMovie,
+  getLatestMovies,
+  getUpcomingMovies,
+  getMovieWatchLink,
+} = require("../controllers/movie");
 
 router.post(
   "/history",
@@ -68,5 +74,17 @@ router.get("/latest", getLatestMovies);
 router.get("/upcoming", getUpcomingMovies);
 
 router.get("/:id", getMovie);
+
+router.post(
+  "/watch",
+  [
+    body("movieId", "Movie Id required").exists(),
+    body("resolution", "Resolution required").exists().isNumeric(),
+    header("Authorization", "Authorization token is required").exists(),
+  ],
+  validate,
+  isLoggedIn,
+  getMovieWatchLink,
+);
 
 module.exports = router;

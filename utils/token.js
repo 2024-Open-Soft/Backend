@@ -11,7 +11,20 @@ const parseToken = (req) => {
   return jwt.verify(token, JWT);
 };
 
+
+const getActiveTokens = (tokens) => {
+  for(const token of tokens) {
+    try {
+      jwt.verify(token, JWT);
+    } catch (error) {
+      tokens = tokens.filter(t => t !== token);
+    }
+  }
+  return tokens;
+}
+
 module.exports = {
   generateJWT,
   parseToken,
+  getActiveTokens
 };
