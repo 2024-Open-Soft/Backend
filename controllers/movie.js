@@ -72,7 +72,7 @@ const getMovie = async (req, res) => {
 
 const getLatestMovies = async (req, res) => {
     const page = req.query.page ? parseInt(req.query.page) : 1;
-    const perPage = 50;
+    const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
 
     if (page < 1) return res.status(400).json({ message: "Invalid page requested", data: {} });
 
@@ -82,14 +82,14 @@ const getLatestMovies = async (req, res) => {
         const totalResults = await Movie.find({ released: { $lte: new Date() } }).countDocuments();
         const totalPage = Math.floor((totalResults + perPage - 1) / perPage);
 
-        if (page > totalPage) return res.status(400).json({ message: "Invalid page requested", data: {} });
+        if (totalPage !== 0 && page > totalPage) return res.status(400).json({ message: "Invalid page requested", data: {} });
 
         const movies = await Movie.find({ released: { $lte: new Date() } })
             .sort({ released: -1 })
             .skip(skip)
             .limit(perPage)
         // .select("title released");
-        return res.status(200).json({ message: "Latest movies fetched", data: movies });
+        return res.status(200).json({ message: "Latest movies fetched", data: movies, totalPage });
     }
     catch (error) {
         return res.status(500).json({ error: "Interval server error" });
@@ -97,8 +97,8 @@ const getLatestMovies = async (req, res) => {
 }
 
 const getUpcomingMovies = async (req, res) => {
-    const page = req.query.page;
-    const perPage = 50;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
 
     if (page < 1) return res.status(400).json({ error: "Invalid page requested", data: {} });
 
@@ -116,7 +116,7 @@ const getUpcomingMovies = async (req, res) => {
             .limit(perPage)
         // .select("title released");
 
-        return res.status(200).json({ message: "Upcoming movies fetched", data: movies });
+        return res.status(200).json({ message: "Upcoming movies fetched", data: movies, totalPage });
     }
     catch (error) {
         return res.status(500).json({ error: "Interval server error" });
@@ -135,7 +135,36 @@ const getfeaturedMovie = async (req, res) => {
     }
 }
 
+const filterMovies = async(req,res) => {
+    const {genres, languages, rating} = req.query;
+    console.log(genres, languages, rating);
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
+    let query = {};
+    if(rating) query = { 
+        'imdb.rating': { $gt: parseFloat(rating), $lte: parseFloat(rating)+1 }
+    };
+    if(genres) query.genres = {
+        $elemMatch: { $in: genres.split(',') }
+    };
+    if(languages) query.languages = {
+        $elemMatch: { $in: languages.split(',') }
+    };
+    console.log(query)
+    try {
+        const totalResults = await Movie.find(query).countDocuments();
+        const totalPage = Math.floor((totalResults + perPage - 1) / perPage);
+        if (page > totalPage && totalPage!==0) return res.status(400).json({ message: "Invalid page requested", data: {} });
+        const movies = await Movie.find(query).sort({ released: -1 }).skip((page - 1) * perPage).limit(perPage);
+        return res.status(200).json({ message: "Filtered movies fetched", data: movies, totalPage });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({error: "Internal server error"});
+    }
+}
+
 module.exports = {
+    filterMovies,
     getMovies,
     getMovie,
     getLatestMovies,
