@@ -8,9 +8,10 @@ const createUserObject = async (user) => {
     delete data.history
     delete data.watchLater
     delete data.tokens
-    delete data.maxTokens
+    delete data.payments
 
-    const watchLater = [], history = [], comments = [], subscriptions = [];
+
+    const watchLater = [], history = [], comments = [], subscriptions = [], payments = [];
 
     for (let i in user.watchLater) {
         const movie = await Movie.findById(user.watchLater[i]);
@@ -32,7 +33,12 @@ const createUserObject = async (user) => {
         comments.push(comment)
     }
 
-    return { ...data, history, watchLater, comments, subscriptions }
+    for (let i in user.payments) {
+        const plan = await SubscriptionPlan.findById(user.payments[i].plan);
+        payments.push({ ...user.payments[i].toObject(), title: plan.name});
+    }
+
+    return { ...data, history, watchLater, comments, subscriptions, payments }
 }
 
 module.exports = { createUserObject }

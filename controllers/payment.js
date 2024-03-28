@@ -2,37 +2,58 @@ const crypto = require('crypto')
 const { SubscriptionPlan, User } = require('../models')
 const { generatePaymentLink } = require('../utils/payment')
 
-const webhook_secret = process.env.webhook_secret
-
+const webhook_secret = 'WSG_-yWHaPvp6kx'
 
 const getPaymentLink = async (req, res) => {
     try {
         const {
             planID, // based on which plan is selected
             duration, // in months
-            startDate
         } = req.body;
+
+
+        const startDate = new Date(req.body.startDate)
+        const endDate = new Date(startDate.getTime() + duration * 30 * 24 * 60 * 60 * 1000);
+
+
+        if (endDate < new Date()) {
+            return res.status(400).json({ error: "Invalid start date" });
+        }
+
+        const subscriptions = [...req.user.subscriptions]
+
+        for (let i in subscriptions) {
+            const subscription = subscriptions[i].toObject()
+            const expiryDate = new Date((new Date(subscription.startDate)).getTime() + subscription.originalDuration * 30 * 24 * 60 * 60 * 1000);
+            
+            if (
+                (endDate >= subscription.startDate && endDate <= expiryDate) ||
+                (startDate >= subscription.startDate && startDate <= expiryDate)
+            ) {
+                return res.status(400).json({ error: "You already have a subscription in the given period" });
+            }
+        }
 
         // extraction of plan details from the database
         const plan = await SubscriptionPlan.findById(planID);
-        const amount = parseInt(plan.price) * parseInt(duration);
+        const amount = parseInt(plan.price) * parseInt(duration) * (1 - parseInt(plan.discountPercentage) / 100);
 
         // generate a unique reference id
         const referenceId = crypto.randomBytes(16).toString('hex');
 
         // get the user details and generate the payment link
         const { name, email, phone } = req.user;
-        const { id, short_url } = await generatePaymentLink(referenceId, amount, "INR", { name, contact: phone, email }, planID, req.user);
+        const { id, short_url } = await generatePaymentLink(referenceId, amount, "INR", { name, contact: phone, email }, planID, startDate, duration, req.user);
 
         // storing the payment link details in the database
-        req.user.subscriptions.push({ plan: plan, referenceId: referenceId, paylinkId: id, startDate: startDate, orignalDuration: duration });
-        await User.findByIdAndUpdate(req.user._id, { subscriptions: req.user.subscriptions });
+        req.user.payments.push({ plan: plan, referenceId: referenceId, paylinkId: id, amount: amount, discountPercentage: plan.discountPercentage });
+        await User.findByIdAndUpdate(req.user._id, { payments: req.user.payments });
 
         return res.status(200).json({ message: "Payment link generated", link: short_url });
     }
     catch (error) {
         console.log(error);
-        res.status(error.status).send({ error: "Internal server error"});
+        res.status(error.status).send({ error: "Internal server error" });
     }
 }
 
@@ -54,18 +75,29 @@ const verification = async (req, res) => {
         if (signatureIsValid) {
 
             // storing the payment details in the database
-            const user_id = req.body.payload.payment.entity.notes.userID
-            const user = await User.findOne({ _id: user_id })
+            const { referenceId, userID, planID, startDate, originalDuration } = req.body.payload.payment.entity.notes
+            const { status, id, order_id } = req.body.payload.payment.entity
 
-            const subID = user.subscriptions.findIndex(sub => sub.referenceId === req.body.payload.payment.entity.notes.referenceId)
-            const subscriptions = [...user.subscriptions]
+            const user = await User.findOne({ _id: userID })
 
-            subscriptions[subID].status = req.body.payload.payment.entity.status
-            subscriptions[subID].paymentId = req.body.payload.payment.entity.id
-            subscriptions[subID].orderId = req.body.payload.payment.entity.order_id
-            subscriptions[subID].razorpay_signature = razorpay_signature
+            const ind = user.payments.findIndex(sub => sub.referenceId === referenceId)
+            const payments = [...user.payments]
 
-            await User.findByIdAndUpdate(user_id, { subscriptions: subscriptions })
+            payments[ind].status = status === "captured" ? "PAID" : "PAYMENT_ERROR"
+            payments[ind].paymentId = id
+            payments[ind].orderId = order_id
+            payments[ind].razorpay_signature = razorpay_signature
+
+            const subscription = {
+                plan: planID,
+                startDate: startDate,
+                orignalDuration: originalDuration,
+                payment: payments[ind]
+            }
+
+            user.subscriptions.push(subscription)
+
+            await User.findByIdAndUpdate(userID, { payments: payments, subscriptions: user.subscriptions })
         }
         else {
             console.log({ success: false, message: "Payment verification failed" })

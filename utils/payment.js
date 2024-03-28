@@ -11,7 +11,7 @@ function getUnixTime() {
     return unixTime;
 }
 
-const generatePaymentLink = async (referenceId, amount, currency, customer, planID, user) => {
+const generatePaymentLink = async (referenceId, amount, currency, customer, planID, startDate, orignalDuration, user) => {
     const razorpayInstance = new Razorpay({
         key_id: key_id,
         key_secret: key_secret,
@@ -24,7 +24,9 @@ const generatePaymentLink = async (referenceId, amount, currency, customer, plan
         notes: {
             planID: planID,
             userID: user._id,
-            referenceId: referenceId
+            referenceId: referenceId,
+            startDate: startDate,
+            orignalDuration: orignalDuration
         },
         customer: customer,
         expire_by: getUnixTime(),   // 30 minutes past the current time
