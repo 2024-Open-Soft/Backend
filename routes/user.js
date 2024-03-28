@@ -27,8 +27,8 @@ router.post(
   [
     body("password").notEmpty().withMessage("Password is required"),
     oneOf(
-      [body("email").isEmail(), body("phoneNumber").isMobilePhone()],
-      "Email or phone number is required",
+      [body("phoneNumber").isMobilePhone()],
+      "Phone number is required",
     ),
   ],
   validate,

@@ -2,13 +2,14 @@ const router = require("express").Router();
 const { body } = require("express-validator");
 
 const { isLoggedIn, isAdmin } = require("../middlewares");
-const { getAllUsers, getUser } = require("../controllers/adminUserController");
+const { getAllUsers, getUser } = require("../controllers/admin-user");
 const {
   getMovie,
   getAllMovies,
-} = require("../controllers/adminMovieController");
-const { deleteComment } = require("../controllers/adminCommentController");
+} = require("../controllers/admin-movie");
+const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
+const { createSubscriptionPlan } = require("../controllers/admin-plan");
 
 router.get("/user", isLoggedIn, isAdmin, getAllUsers);
 router.get("/user/:id", isLoggedIn, isAdmin, getUser);
@@ -24,6 +25,12 @@ router.delete(
   isAdmin,
   deleteComment,
 );
+
+router.post(
+  "/plan",
+  isLoggedIn, isAdmin, 
+  createSubscriptionPlan
+)
 
 module.exports = router;
 
