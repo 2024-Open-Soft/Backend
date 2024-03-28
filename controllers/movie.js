@@ -1,5 +1,6 @@
 const { User, Movie, Comment } = require("../models");
 const aws = require("../utils/aws");
+const { getActiveSubscriptionPlan } = require("../utils/subscription");
 
 const getMovies = async (req, res) => {
   try {
@@ -154,8 +155,24 @@ const getfeaturedMovie = async (req, res) => {
 };
 
 function getMovieWatchLink(req, res) {
+  const movie = Movie.findById(req.body.movieId);
+  if (!movie) return res.json({ error: "not a valid movieId" });
+
+  const { activeSubscription } = getActiveSubscriptionPlan(req.user);
+
+  if (
+    parseInt(
+      activeSubscription.features.filter(
+        ({ name }) => name === "max-resolution",
+      )[0].value,
+    ) <= req.body.resolution
+  )
+    return res
+      .status(401)
+      .json({ error: "your subscription does not support this resolution" });
+
   let url = aws.getCloudfrontUrl(
-    `transcoded/${req.body.movieId}-${req.body.resolution}.m3u8`,
+    `transcoded/${movie._id}-${req.body.resolution}.m3u8`,
   );
   return res.json({ url });
 }

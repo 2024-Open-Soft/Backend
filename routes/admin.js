@@ -9,6 +9,8 @@ const {
   getAllMovies,
   uploadMovie,
   uploadTrailer,
+  deleteMovie,
+  deleteTrailer,
 } = require("../controllers/admin-movie");
 const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
@@ -42,6 +44,15 @@ router.post(
 );
 
 router.post(
+  "/movie/delete",
+  isLoggedIn,
+  isAdmin,
+  body("movieId").exists().withMessage("Movie ID is required"),
+  validate,
+  deleteMovie,
+);
+
+router.post(
   "/movie/trailer/upload",
   isLoggedIn,
   isAdmin,
@@ -49,6 +60,15 @@ router.post(
   validate,
   multer().single("file"),
   uploadTrailer,
+);
+
+router.post(
+  "/movie/trailer/delete",
+  isLoggedIn,
+  isAdmin,
+  body("movieId").exists().withMessage("Movie ID is required"),
+  validate,
+  deleteTrailer,
 );
 
 module.exports = router;

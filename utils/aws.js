@@ -4,7 +4,11 @@ const {
   MediaConvertClient,
   CreateJobCommand,
 } = require("@aws-sdk/client-mediaconvert");
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
 
 const aws = {
   credentials: {
@@ -122,4 +126,24 @@ function getS3Url(fileName) {
   return `https://${aws.s3.bucket}.s3.${aws.region}.amazonaws.com/${fileName}`;
 }
 
-module.exports = { aws, convertVideo, getCloudfrontUrl, getS3Url, upload };
+function deleteFile(fileName) {
+  const client = new S3Client({
+    credentials: aws.credentials,
+    region: aws.region,
+  });
+  const command = new DeleteObjectCommand({
+    Key: `${fileName}`,
+    Bucket: aws.s3bucket,
+    Body: file,
+  });
+  return client.send(command);
+}
+
+module.exports = {
+  aws,
+  convertVideo,
+  getCloudfrontUrl,
+  getS3Url,
+  upload,
+  deleteFile,
+};
