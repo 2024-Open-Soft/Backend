@@ -17,9 +17,10 @@ const isLoggedIn = async (req, res, next) => {
       return res.status(400).json({ error: "User not found" });
     }
     req.user = user;
+    req.token = token
     next();
   } catch (error) {
-    if(error.name === 'TokenExpiredError'){
+    if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: "Token expired" });
     }
     return res.status(401).json({ error: "Invalid token" });
