@@ -7,6 +7,7 @@ const register = require("../controllers/register");
 const { loginUser } = require("../controllers/login");
 const { validate } = require("../utils/validator");
 
+
 router.post(
   "/register", // Register user endpoint
   [
@@ -38,5 +39,7 @@ router.post(
 router.get("/profile", isLoggedIn, getProfile);
 
 router.put("/profile", isLoggedIn, updateProfile);
+
+
 
 module.exports = router;
