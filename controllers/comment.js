@@ -6,10 +6,13 @@ const getComments = async (req, res) => {
 
     let comments = await Comment.find({ movie: movieId });
 
-    comments.map(async (comment) => ({
-      ...comment,
-      user: (await User.findById(comment.user)).toObject(),
-    }));
+    comments.map(async (comment) => {
+      const user = await User.findById(comment.user);
+      return {
+        ...comment,
+        user: user,
+      };
+    });
 
     return res.json({
       message: "Comments fetched successfully",
