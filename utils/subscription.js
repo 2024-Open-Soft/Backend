@@ -14,10 +14,9 @@ const getActiveSubscriptionPlan = async (user) => {
         if (endDate >= currentdate && startDate <= currentdate && i.status === "captured") {
             const plan = await SubscriptionPlan.findById(i.plan);
 
-            for (const feature in plan.features) {
-                console.log(feature)
-                if (feature.name === "max-devices") {
-                    maxDevices = feature.value;
+            for (const i in plan.features) {
+                if (plan.features[i].name === "max-devices") {
+                    maxDevices = parseInt(plan.features[i].value);
                     break;
                 }
             }
