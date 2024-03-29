@@ -2,6 +2,8 @@ const router = require("express").Router();
 const { body } = require("express-validator");
 const multer = require("multer");
 
+const { updatePlan } = require("../controllers/admin-plan");
+
 const { isLoggedIn, isAdmin } = require("../middlewares");
 const { getAllUsers, getUser } = require("../controllers/admin-user");
 const {
@@ -32,6 +34,8 @@ router.delete(
 );
 
 router.post("/plan", isLoggedIn, isAdmin, createSubscriptionPlan);
+
+router.put("/plan/:id",isLoggedIn, isAdmin, updatePlan);
 
 router.post(
   "/movie/:movieId/upload",

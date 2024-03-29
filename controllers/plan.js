@@ -26,3 +26,5 @@ const getSubscriptionPlan = async (req, res) => {
 
 
 module.exports = { getSubscriptionPlans, getSubscriptionPlan };
+
+

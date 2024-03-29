@@ -44,10 +44,6 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
     },
-    countryCode: {
-      type: String,
-      default: "+91",
-    },
     isAdmin: { type: Boolean, default: false },
     genres: [String],
     languages: [String],
@@ -62,7 +58,7 @@ const UserSchema = new Schema(
     payments: [PaymentSchema],
     subscriptions: [SubscriptionSchema],
     tokens: [{ type: String, default: [] }],
-    ips: { type: [String], default: [] },
+    ips: { type: String, default: [] },
   },
   { timestamps: true },
 );
