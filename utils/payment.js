@@ -46,36 +46,15 @@ const generatePaymentLink = async (
     reminder_enable: true,
     options: {
       checkout: {
+        name: 'WIIO',
         theme: {
           hide_topbar: true,
         },
-<<<<<<< HEAD
-        customer: customer,
-        expire_by: getUnixTime(),   // 30 minutes past the current time
-        reference_id: referenceId,    // need to be unique every time
-        notify: {
-            sms: true,
-            email: true
-        },
-        reminder_enable: true,
-        options: {
-            checkout: {
-                name: 'WIIO',
-                theme: {
-                    hide_topbar: true
-                }
-            }
-        }
-    }
-    const res = await razorpayInstance.paymentLink.create(order)
-    return res
-=======
       },
     },
   };
   const res = await razorpayInstance.paymentLink.create(order);
   return res;
->>>>>>> 17425c4379726f5e79af16c009cf8b67f95382f1
 };
 
 module.exports = {

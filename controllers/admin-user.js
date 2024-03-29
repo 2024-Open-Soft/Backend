@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-const bcrypt = require("bcryptjs");
-const { parseToken } = require("../utils/token");
-=======
->>>>>>> 17425c4379726f5e79af16c009cf8b67f95382f1
 const { User } = require("../models");
 
 const bcrypt = require("bcryptjs");
@@ -58,40 +53,17 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-<<<<<<< HEAD
-        const { name, email, countryCode, phoneNumber, password } = req.body;
-
-        // check if user already exists
-        const user = await User.findOne({ phone: phoneNumber });
-
-        if (user) {
-=======
         const { email, password, name, phoneNumber,countryCode } = req.body;
 
         // find if user already exists with email or phone number
         const userExists = await User.findOne({ $or: [{ email }, { phone: phoneNumber }] });
 
         if (userExists) {
->>>>>>> 17425c4379726f5e79af16c009cf8b67f95382f1
             return res.status(400).json({ error: "User already exists" });
         }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-<<<<<<< HEAD
-
-        const newUser = new User({ name, email, countryCode, phone: phoneNumber, password: hashedPassword });
-        await newUser.save();
-
-        const newUserData = newUser.toObject();
-        
-        // remove password
-        delete newUserData.password;
-
-        return res.status(201).json({
-            data: {
-                user: newUserData
-=======
         
 
         const user = await User.create({
@@ -161,7 +133,6 @@ const deleteUser = async (req, res) => {
         return res.status(200).json({
             data: {
                 user
->>>>>>> 17425c4379726f5e79af16c009cf8b67f95382f1
             }
         });
     }
@@ -174,11 +145,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
     getAllUsers,
     getUser,
-<<<<<<< HEAD
-    createUser
-=======
     createUser,
     updateUser,
     deleteUser
->>>>>>> 17425c4379726f5e79af16c009cf8b67f95382f1
 }
