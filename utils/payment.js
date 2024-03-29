@@ -38,6 +38,7 @@ const generatePaymentLink = async (referenceId, amount, currency, customer, plan
         reminder_enable: true,
         options: {
             checkout: {
+                name: 'WIIO',
                 theme: {
                     hide_topbar: true
                 }
