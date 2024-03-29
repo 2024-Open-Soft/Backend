@@ -42,7 +42,7 @@ const getMovie = async (req, res) => {
   }
 };
 
-async function uploadMovie(req, res) {
+async function uploadMovieFile(req, res) {
   const file = req.file;
   const movie = await Movie.findById(req.params.movieId);
 
@@ -154,41 +154,38 @@ async function deletePoster(req, res) {
   return res.json({ message: "success" });
 }
 
-
-const uploadmovie = async (req, res) => {
-    try {
-        const movie = new Movie(req.body);
-        await movie.save();
-        return res.status(200).json({
-            data: {
-                movie
-            }
-        });
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-}
+const uploadMovie = async (req, res) => {
+  try {
+    const movie = new Movie(req.body);
+    await movie.save();
+    return res.status(200).json({
+      data: {
+        movie,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const updateMovie = async (req, res) => {
-    try {
-        const { id } = req.params;
-        if(!id) {
-            return res.status(404).json({ error: "Movie not found" });
-        }
-        const movie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
-        return res.status(200).json({
-            data: {
-                movie
-            }
-        });
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(404).json({ error: "Movie not found" });
     }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: "Internal server error" });
-    }
-}
+    const movie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
+    return res.status(200).json({
+      data: {
+        movie,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   getAllMovies,
