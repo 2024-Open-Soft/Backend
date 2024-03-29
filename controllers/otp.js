@@ -8,10 +8,9 @@ const { type } = require("os");
 
 const generateOtp = async (req, res) => {
   try {
-    const { email, phoneNumber } = req.body; // Get the email and phone number from the request body
+    const { email, phoneNumber, countryCode } = req.body; // Get the email and phone number from the request body
 
     const payload = {};
-
 
     let otp = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit OTP
 
@@ -21,6 +20,7 @@ const generateOtp = async (req, res) => {
         body: `Your OTP is ${otp}`,
       });
       payload.phoneNumber = phoneNumber; // Store the phone number in the payload
+      payload.countryCode = countryCode;
     } else {
       const token = parseToken(req);
       const userId = token.userId;
@@ -56,9 +56,15 @@ const generateOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     const otp = parseInt(req.body.otp);
-    const { phoneNumber, email, otp: tokenOtp, userId } = parseToken(req);
+    const {
+      phoneNumber,
+      countryCode,
+      email,
+      otp: tokenOtp,
+      userId,
+    } = parseToken(req);
 
-    const payload = {}
+    const payload = {};
 
     const isMatch = await bcrypt.compare(`${otp}`, tokenOtp);
     if (!isMatch) {
@@ -77,11 +83,11 @@ const verifyOtp = async (req, res) => {
       if (!user) {
         user = await User.create({
           phone: phoneNumber,
+          countryCode: countryCode,
         });
         payload.userId = user._id;
       }
     } else {
-
       user = await User.findOne({
         _id: userId,
       });
@@ -112,9 +118,6 @@ const verifyOtp = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-
 
 module.exports = {
   generateOtp,

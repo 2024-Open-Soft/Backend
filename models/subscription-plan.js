@@ -14,7 +14,6 @@ const SubscriptionFeatureSchema = new Schema(
   { timestamps: true },
 );
 
-
 const SubscriptionPlanSchema = new Schema(
   {
     name: String,

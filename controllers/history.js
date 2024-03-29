@@ -2,7 +2,7 @@ const { User } = require("../models");
 
 const updateHistoryController = async (req, res) => {
     try {
-        const { movieId, timestamp="00:00:00" } = req.body;
+        const { movieId, timeStamp="00:00:00" } = req.body;
         
         let user = req.user;
         if(!user.history)
@@ -16,7 +16,9 @@ const updateHistoryController = async (req, res) => {
             user.history = user.history.filter((movie) => movie.movie.toString() !== movieId);
         }
 
-        user.history.unshift({ movie: movieId, timeStamp: timestamp });
+        console.log(timeStamp)
+
+        user.history.unshift({ movie: movieId, timeStamp: timeStamp });
 
         // update the user's history
         await User.findByIdAndUpdate(user._id, { history: user.history })
