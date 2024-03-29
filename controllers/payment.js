@@ -64,8 +64,7 @@ const getPaymentLink = async (req, res) => {
     req.user.payments.push({
       plan: plan,
       referenceId: referenceId,
-      paylinkId: id,
-      amount: amount,
+
       discountPercentage: plan.discountPercentage,
     });
     await User.findByIdAndUpdate(req.user._id, { payments: req.user.payments });
@@ -104,25 +103,27 @@ const verification = async (req, res) => {
       const ind = user.payments.findIndex(
         (sub) => sub.referenceId === referenceId,
       );
-      const payments = [...user.payments];
 
-      payments[ind].status = status === "captured" ? "PAID" : "PAYMENT_ERROR";
-      payments[ind].paymentId = id;
-      payments[ind].orderId = order_id;
-      payments[ind].razorpay_signature = razorpay_signature;
+      const payment = {
+        status: status === "captured" ? "PAID" : "PAYMENT_ERROR",
+        paymentId: id,
+        orderId: order_id,
+        razorpay_signature: razorpay_signature,
+      };
 
       const subscription = {
         plan: planID,
-        startDate: startDate,
-        orignalDuration: originalDuration,
-        payment: payments[ind],
+        startDate,
+        originalDuration,
+        payment,
       };
 
-      user.subscriptions.push(subscription);
+      let payments = user.payments;
+      payments[ind] = payment;
 
       await User.findByIdAndUpdate(userID, {
         payments: payments,
-        subscriptions: user.subscriptions,
+        $push: { subscriptions: subscription },
       });
     } else {
       console.log({ success: false, message: "Payment verification failed" });
