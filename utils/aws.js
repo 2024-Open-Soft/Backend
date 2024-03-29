@@ -105,7 +105,7 @@ function getCloudfrontUrl(fileName) {
     url: aws.cloudfront.fqdn + `${fileName}`,
     keyPairId: process.env.AWS_CLOUDFRONT_KEYPAIR_ID,
     dateLessThan: date.split("T")[0],
-    privateKey: fs.readFileSync("./key.pem"),
+    privateKey: aws.cloudfront.key
   });
 }
 

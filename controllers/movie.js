@@ -157,11 +157,11 @@ const getfeaturedMovie = async (req, res) => {
     }
 };
 
-function getMovieWatchLink(req, res) {
-    const movie = Movie.findById(req.body.movieId);
+async function getMovieWatchLink(req, res) {
+    const movie = await Movie.findById(req.body.movieId);
     if (!movie) return res.json({ error: "not a valid movieId" });
 
-    const { activeSubscription } = getActiveSubscriptionPlan(req.user);
+    const { activeSubscription } = await getActiveSubscriptionPlan(req.user);
 
     const maxRes = parseInt(
         activeSubscription.features.filter(
@@ -171,7 +171,7 @@ function getMovieWatchLink(req, res) {
 
     let urls = [360, 720, 1080]
         .filter((res) => res <= maxRes)
-        .map((res) => aws.getCloudfrontUrl(`transcoded/${movie._id}-${res}.m3u8`));
+        .map((res) => aws.getCloudfrontUrl(`movies/${movie._id}/original-${res}.m3u8`));
     return res.json({ urls });
 }
 
