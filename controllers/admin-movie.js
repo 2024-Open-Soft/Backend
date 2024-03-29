@@ -58,8 +58,28 @@ const uploadmovie = async (req, res) => {
     }
 }
 
+const updateMovie = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if(!id) {
+            return res.status(404).json({ error: "Movie not found" });
+        }
+        const movie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
+        return res.status(200).json({
+            data: {
+                movie
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+
 module.exports = {
     getAllMovies,
     getMovie,
-    uploadmovie
+    uploadmovie,
+    updateMovie
 };

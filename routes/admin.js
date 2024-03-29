@@ -6,7 +6,8 @@ const { getAllUsers, getUser } = require("../controllers/admin-user");
 const {
   getMovie,
   getAllMovies,
-  uploadmovie
+  uploadmovie,
+  updateMovie
 } = require("../controllers/admin-movie");
 const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
@@ -33,6 +34,14 @@ router.post(
   isLoggedIn,
   isAdmin,
   uploadmovie
+)
+
+router.patch(
+  "/movie/:id",
+  validate,
+  isLoggedIn,
+  isAdmin,
+  updateMovie
 )
 
 
