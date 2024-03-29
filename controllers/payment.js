@@ -22,9 +22,9 @@ const getPaymentLink = async (req, res) => {
 
     for (let i in subscriptions) {
       const subscription = subscriptions[i].toObject();
-      const expiryDate = new Date(
-        new Date(subscription.startDate).getTime() +
-          subscription.originalDuration * 30 * 24 * 60 * 60 * 1000,
+      const expiryDate = new Date(subscription.startDate);
+      expiryDate.setMonth(
+        expiryDate.getMonth() + subscription.originalDuration,
       );
 
       if (
@@ -64,7 +64,7 @@ const getPaymentLink = async (req, res) => {
     req.user.payments.push({
       plan: plan,
       referenceId: referenceId,
-
+      paylinkId: id,
       discountPercentage: plan.discountPercentage,
     });
     await User.findByIdAndUpdate(req.user._id, { payments: req.user.payments });

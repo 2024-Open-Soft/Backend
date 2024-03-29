@@ -10,6 +10,8 @@ const {
   getMovie,
   getAllMovies,
   uploadMovie,
+  updateMovie,
+  uploadMovieFile,
   uploadTrailer,
   deleteMovie,
   deleteTrailer,
@@ -79,11 +81,37 @@ router.post("/plan", isLoggedIn, isAdmin, createSubscriptionPlan);
 router.put("/plan/:id",isLoggedIn, isAdmin, updatePlan);
 
 router.post(
+  "/movie/upload",
+  body('title').exists().withMessage('Field is required'),
+  body('plot').exists().withMessage('Field is required'),
+  body('genres').exists().withMessage('Field is required'),
+  body('runtime').exists().withMessage('Field is required'),
+  body('cast').exists().withMessage('Field is required'),
+  body('languages').exists().withMessage('Field is required'),
+  body('released').exists().withMessage('Field is required'),
+  body('directors').exists().withMessage('Field is required'),
+  body('rated').exists().withMessage('Field is required'),
+  validate,
+  isLoggedIn,
+  isAdmin,
+  uploadMovie
+)
+
+
+router.patch(
+  "/movie/:id",
+  validate,
+  isLoggedIn,
+  isAdmin,
+  updateMovie
+)
+
+router.post(
   "/movie/:movieId/upload",
   isLoggedIn,
   isAdmin,
   multer().single("file"),
-  uploadMovie,
+  uploadMovieFile,
 );
 
 router.post("/movie/:movieId/delete", isLoggedIn, isAdmin, deleteMovie);
