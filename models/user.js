@@ -61,7 +61,7 @@ const UserSchema = new Schema(
     comments: [ref("Comment")],
     payments: [PaymentSchema],
     subscriptions: [SubscriptionSchema],
-    tokens: [{ type: String, default: [] }],
+    tokens: { type: [String], default: [] },
     ips: { type: [String], default: [] },
   },
   { timestamps: true },
