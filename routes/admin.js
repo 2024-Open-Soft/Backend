@@ -5,11 +5,7 @@ const multer = require("multer");
 const { updatePlan } = require("../controllers/admin-plan");
 
 const { isLoggedIn, isAdmin } = require("../middlewares");
-<<<<<<< HEAD
-const { getAllUsers, getUser, createUser } = require("../controllers/admin-user");
-=======
 const { getAllUsers, getUser, createUser, updateUser, deleteUser } = require("../controllers/admin-user");
->>>>>>> 17425c4379726f5e79af16c009cf8b67f95382f1
 const {
   getMovie,
   getAllMovies,
@@ -22,24 +18,6 @@ const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
 const { createSubscriptionPlan } = require("../controllers/admin-plan");
 
-<<<<<<< HEAD
-router.get("/user", isLoggedIn, isAdmin, getAllUsers);
-router.get("/user/:id", isLoggedIn, isAdmin, getUser);
-router.post(
-  "/user",
-  [
-    body("name").exists().withMessage("Name is required"),
-    body("email").exists().withMessage("Email is required"),
-    body("countryCode").exists().withMessage("Country code is required"),
-    body("phoneNumber").exists().withMessage("Phone number is required"),
-    body("password").exists().withMessage("Password is required"),
-  ],
-  validate,
-  isLoggedIn,
-  isAdmin,
-  createUser
-);
-=======
 router.get("/user", 
   header("Authorization").exists().withMessage("Token is required"),
   validate,
@@ -48,7 +26,6 @@ router.get("/user/:id",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
 isLoggedIn, isAdmin, getUser);
->>>>>>> 17425c4379726f5e79af16c009cf8b67f95382f1
 
 router.post("/user",
   body("email").exists().isEmail().withMessage("Email is required"),
