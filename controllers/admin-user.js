@@ -1,5 +1,6 @@
-const { parseToken } = require("../utils/token");
 const { User } = require("../models");
+
+const bcrypt = require("bcryptjs");
 
 const getAllUsers = async (req, res) => {
     try {
@@ -54,6 +55,13 @@ const createUser = async (req, res) => {
     try {
         const { email, password, name, phoneNumber } = req.body;
 
+        // find if user already exists with email or phone number
+        const userExists = await User.findOne({ $or: [{ email }, { phone: phoneNumber }] });
+
+        if (userExists) {
+            return res.status(400).json({ error: "User already exists" });
+        }
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         
@@ -62,7 +70,7 @@ const createUser = async (req, res) => {
             email,
             password: hashedPassword,
             name,
-            phoneNumber
+            phone: phoneNumber
         });
 
         return res.status(201).json({
@@ -80,7 +88,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { email='', password='', name='', phoneNumber='' } = req.body;
+        const { email='', password='', name='', phoneNumber='', countryCode='+91' } = req.body;
 
         const user = await User.findById(id);
 
@@ -88,16 +96,18 @@ const updateUser = async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        if (email)
+        if (email != '')
             user.email = email;
-        if (password) {
+        if (password != '') {
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(password, salt);
         }
-        if (name)
+        if (name != '')
             user.name = name;
-        if (phoneNumber)
-            user.phoneNumber = phoneNumber;
+        if (phoneNumber != '')
+            user.phone = phoneNumber;
+        if (countryCode != '+91')
+            user.countryCode = countryCode;
         
         await user.save();
 

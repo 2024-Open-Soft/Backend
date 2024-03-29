@@ -30,17 +30,16 @@ router.post("/user",
 
 router.put("/user/:id",
   oneOf([
-    body("email").exists().isEmail().withMessage("Email is required"),
-    body("password").exists().isLength({ min: 8 }).withMessage("Password is required"),
-    body("name").exists().withMessage("Name is required"),
-    body("phoneNumber").exists().isMobilePhone().withMessage("Phone number is required"),
+    body("email").isEmail(),
+    body("password").isLength({ min: 8 }),
+    body("name"),
+    body("phoneNumber").isMobilePhone(),
   ]),
   header("Authorization").exists().withMessage("Token is required"),
   validate,
   isLoggedIn, isAdmin, updateUser);
 
 router.delete("/user/:id",
-  body("userId").exists().withMessage("User ID is required"),
   header("Authorization").exists().withMessage("Token is required"),
   validate,
   isLoggedIn, isAdmin, deleteUser);
