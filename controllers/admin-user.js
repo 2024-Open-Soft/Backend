@@ -53,7 +53,7 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        const { email, password, name, phoneNumber } = req.body;
+        const { email, password, name, phoneNumber,countryCode } = req.body;
 
         // find if user already exists with email or phone number
         const userExists = await User.findOne({ $or: [{ email }, { phone: phoneNumber }] });
@@ -70,7 +70,8 @@ const createUser = async (req, res) => {
             email,
             password: hashedPassword,
             name,
-            phone: phoneNumber
+            phone: phoneNumber,
+            countryCode
         });
 
         return res.status(201).json({

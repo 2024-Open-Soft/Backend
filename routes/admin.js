@@ -16,8 +16,14 @@ const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
 const { createSubscriptionPlan } = require("../controllers/admin-plan");
 
-router.get("/user", isLoggedIn, isAdmin, getAllUsers);
-router.get("/user/:id", isLoggedIn, isAdmin, getUser);
+router.get("/user", 
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+isLoggedIn, isAdmin, getAllUsers);
+router.get("/user/:id", 
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+isLoggedIn, isAdmin, getUser);
 
 router.post("/user",
   body("email").exists().isEmail().withMessage("Email is required"),
@@ -26,6 +32,7 @@ router.post("/user",
   body("phoneNumber").exists().isMobilePhone().withMessage("Phone number is required"),
   body("countryCode").exists().withMessage("Country code is required"),
   header("Authorization").exists().withMessage("Token is required"),
+  validate,
   isLoggedIn, isAdmin, createUser);
 
 router.put("/user/:id",
@@ -34,6 +41,7 @@ router.put("/user/:id",
     body("password").isLength({ min: 8 }),
     body("name"),
     body("phoneNumber").isMobilePhone(),
+    body("countryCode"),
   ]),
   header("Authorization").exists().withMessage("Token is required"),
   validate,
@@ -57,6 +65,7 @@ router.get("/movie",
 router.delete(
   "/movie/comments",
   body("commentId").exists().withMessage("Comment ID is required"),
+  header("Authorization").exists().withMessage("Token is required"),
   validate,
   isLoggedIn,
   isAdmin,
