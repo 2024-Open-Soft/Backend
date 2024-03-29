@@ -49,14 +49,14 @@ async function uploadMovie(req, res) {
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
   try {
-    await aws.upload(file.buffer, `movies/${movie._id}/orignal`);
+    await aws.upload(file.buffer, `movies/${movie._id}/original`);
   } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
   }
 
   try {
     await aws.convertVideo(
-      `movies/${movie._id}/orignal`,
+      `movies/${movie._id}/original`,
       [360, 720, 1080],
       `movies/${movie._id}/`,
     );
@@ -87,14 +87,14 @@ async function uploadTrailer(req, res) {
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
   try {
-    await aws.upload(file.buffer, `trailers/${movie._id}/orignal`);
+    await aws.upload(file.buffer, `trailers/${movie._id}/original`);
   } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
   }
 
   try {
     await aws.convertVideo(
-      `trailers/${movie._id}/orignal`,
+      `trailers/${movie._id}/original`,
       [1080],
       `trailers/${movie._id}/`,
     );
@@ -103,7 +103,7 @@ async function uploadTrailer(req, res) {
   }
 
   await Movie.findByIdAndUpdate(movie._id, {
-    trailer: aws.getS3Url(`trailers/${movie._id}/orignal-1080.m3u8`),
+    trailer: aws.getS3Url(`trailers/${movie._id}/original-1080.m3u8`),
   });
 
   return res.json({ message: "success" });
@@ -135,7 +135,7 @@ async function uploadPoster(req, res) {
   }
 
   await Movie.findByIdAndUpdate(movie._id, {
-    poster: aws.getS3Url(`posters/${movie._id}/orignal-1080.m3u8`),
+    poster: aws.getS3Url(`posters/${movie._id}/original-1080.m3u8`),
   });
 
   return res.json({ message: "success" });
