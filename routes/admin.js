@@ -34,36 +34,40 @@ router.delete(
 router.post("/plan", isLoggedIn, isAdmin, createSubscriptionPlan);
 
 router.post(
-  "/movie/upload",
+  "/movie/:movieId/upload",
   isLoggedIn,
   isAdmin,
-  body("movieId").exists().withMessage("Movie ID is required"),
-  validate,
   multer().single("file"),
   uploadMovie,
 );
 
-router.post(
-  "/movie/delete",
-  isLoggedIn,
-  isAdmin,
-  body("movieId").exists().withMessage("Movie ID is required"),
-  validate,
-  deleteMovie,
-);
+router.post("/movie/:movieId/delete", isLoggedIn, isAdmin, deleteMovie);
 
 router.post(
-  "/movie/trailer/upload",
+  "/movie/:movieId/trailer/upload",
   isLoggedIn,
   isAdmin,
-  body("movieId").exists().withMessage("Movie ID is required"),
-  validate,
   multer().single("file"),
   uploadTrailer,
 );
 
 router.post(
-  "/movie/trailer/delete",
+  "/movie/:movieId/trailer/delete",
+  isLoggedIn,
+  isAdmin,
+  deleteTrailer,
+);
+
+router.post(
+  "/movie/:movieId/poster/upload",
+  isLoggedIn,
+  isAdmin,
+  multer().single("file"),
+  uploadTrailer,
+);
+
+router.post(
+  "/movie/:movieId/poster/delete",
   isLoggedIn,
   isAdmin,
   body("movieId").exists().withMessage("Movie ID is required"),

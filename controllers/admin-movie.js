@@ -44,68 +44,112 @@ const getMovie = async (req, res) => {
 
 async function uploadMovie(req, res) {
   const file = req.file;
-  const movie = Movie.findById(req.body.movieId);
+  const movie = await Movie.findById(req.params.movieId);
 
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
-  const s3res = await aws.upload(file.buffer, `movies/${movie._id}/orignal`);
-  if (s3res.status != 200)
+  try {
+    await aws.upload(file.buffer, `movies/${movie._id}/orignal`);
+  } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
+  }
 
-  const mediaConvertRes = await aws.convertVideo(
-    `movies/${movie._id}/orignal`,
-    [360, 720, 1080],
-    `movies/${movie._id}/`,
-  );
-  if (mediaConvertRes.status != 200)
+  try {
+    await aws.convertVideo(
+      `movies/${movie._id}/orignal`,
+      [360, 720, 1080],
+      `movies/${movie._id}/`,
+    );
+  } catch (e) {
     return res.status(500).json({ error: "error converting video" });
+  }
+
+  return res.json({ message: "success" });
+}
+
+async function deleteMovie(req, res) {
+  const movie = await Movie.findById(req.params.movieId);
+  if (!movie) return res.status(400).json({ error: "not a valid movie id" });
+
+  try {
+    await aws.deleteFile(`movies/${movie._id}`);
+  } catch (e) {
+    return res.status(500).json({ error: "error uploading to s3" });
+  }
 
   return res.json({ message: "success" });
 }
 
 async function uploadTrailer(req, res) {
   const file = req.file;
-  const movie = Movie.findById(req.body.movieId);
+  const movie = await Movie.findById(req.params.movieId);
 
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
-  const s3res = await aws.upload(file.buffer, `trailers/${movie._id}/orignal`);
-  if (s3res.status != 200)
+  try {
+    await aws.upload(file.buffer, `trailers/${movie._id}/orignal`);
+  } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
+  }
 
-  const mediaConvertRes = await aws.convertVideo(
-    `trailers/${movie._id}/orignal`,
-    [1080],
-    `trailers/${movie._id}/`,
-  );
-  if (mediaConvertRes.status != 200)
+  try {
+    await aws.convertVideo(
+      `trailers/${movie._id}/orignal`,
+      [1080],
+      `trailers/${movie._id}/`,
+    );
+  } catch (e) {
     return res.status(500).json({ error: "error converting video" });
+  }
 
-  Movie.findByIdAndUpdate(movie._id, {
-    trailerUrl: aws.getS3Url(`trailers/${movie._id}/orignal-1080.m3u8`),
+  await Movie.findByIdAndUpdate(movie._id, {
+    trailer: aws.getS3Url(`trailers/${movie._id}/orignal-1080.m3u8`),
   });
 
   return res.json({ message: "success" });
 }
 
-async function deleteMovie(req, res) {
-  const movie = Movie.findById(req.body.movieId);
+async function deleteTrailer(req, res) {
+  const movie = await Movie.findById(req.params.movieId);
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
-  const s3res = await aws.deleteFile(`movies/${movie._id}`);
-  if (s3res.status != 200)
+  try {
+    await aws.deleteFile(`trailers/${movie._id}`);
+  } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
+  }
 
   return res.json({ message: "success" });
 }
 
-async function deleteTrailer(req, res) {
-  const movie = Movie.findById(req.body.movieId);
+async function uploadPoster(req, res) {
+  const file = req.file;
+  const movie = await Movie.findById(req.params.movieId);
+
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
-  const s3res = await aws.deleteFile(`trailers/${movie._id}`);
-  if (s3res.status != 200)
+  try {
+    await aws.upload(file.buffer, `posters/${movie._id}`);
+  } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
+  }
+
+  await Movie.findByIdAndUpdate(movie._id, {
+    poster: aws.getS3Url(`posters/${movie._id}/orignal-1080.m3u8`),
+  });
+
+  return res.json({ message: "success" });
+}
+
+async function deletePoster(req, res) {
+  const movie = await Movie.findById(req.params.movieId);
+  if (!movie) return res.status(400).json({ error: "not a valid movie id" });
+
+  try {
+    await aws.deleteFile(`posters/${movie._id}`);
+  } catch (e) {
+    return res.status(500).json({ error: "error uploading to s3" });
+  }
 
   return res.json({ message: "success" });
 }
@@ -117,4 +161,6 @@ module.exports = {
   uploadTrailer,
   deleteMovie,
   deleteTrailer,
+  uploadPoster,
+  deletePoster,
 };
