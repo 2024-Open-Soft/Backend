@@ -47,6 +47,10 @@ const MovieSchema = new Schema({
   directors: [String],
   fullplot: String,
   genres: [String],
+  isReleased: {
+    type: Boolean,
+    default: false,
+  },
   isfeatured: {
     type: Boolean,
     default: false,
