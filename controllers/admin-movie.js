@@ -154,10 +154,48 @@ async function deletePoster(req, res) {
   return res.json({ message: "success" });
 }
 
+
+const uploadmovie = async (req, res) => {
+    try {
+        const movie = new Movie(req.body);
+        await movie.save();
+        return res.status(200).json({
+            data: {
+                movie
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+const updateMovie = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if(!id) {
+            return res.status(404).json({ error: "Movie not found" });
+        }
+        const movie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
+        return res.status(200).json({
+            data: {
+                movie
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+
 module.exports = {
   getAllMovies,
   getMovie,
   uploadMovie,
+  updateMovie,
+  uploadMovieFile,
   uploadTrailer,
   deleteMovie,
   deleteTrailer,
