@@ -14,7 +14,7 @@ const getMovies = async (req, res) => {
 
     // remove movie's video url from each movie object
     movies = movies.map((movie) => {
-      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+      const { movieUrl, plot_embedding, summary_embedding, ...rest } = movie.toObject();
       return rest;
     });
 
@@ -61,7 +61,7 @@ const getMovie = async (req, res) => {
     );
 
     // remove movie's url from movie object
-    const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+    const { movieUrl, plot_embedding, summary_embedding, ...rest } = movie.toObject();
 
     return res.status(200).json({
       data: {
@@ -104,7 +104,7 @@ const getLatestMovies = async (req, res) => {
     // .select("title released");
 
     movies = movies.map((movie) => {
-      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+      const { movieUrl, plot_embedding, summary_embedding, ...rest } = movie.toObject();
       return rest;
     });
 
@@ -143,7 +143,7 @@ const getUpcomingMovies = async (req, res) => {
     // .select("title released");
 
     movies = movies.map((movie) => {
-      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+      const { movieUrl, plot_embedding, summary_embedding, ...rest } = movie.toObject();
       return rest;
     });
 
@@ -216,7 +216,7 @@ const filterMovies = async (req, res) => {
       .limit(perPage);
 
     movies = movies.map((movie) => {
-      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+      const { movieUrl, plot_embedding, summary_embedding, ...rest } = movie.toObject();
       return rest;
     });
 
