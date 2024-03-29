@@ -14,7 +14,7 @@ const getMovies = async (req, res) => {
 
     // remove movie's video url from each movie object
     movies = movies.map((movie) => {
-      const { movieUrl, ...rest } = movie.toObject();
+      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
       return rest;
     });
 
@@ -61,7 +61,7 @@ const getMovie = async (req, res) => {
     );
 
     // remove movie's url from movie object
-    const { movieUrl, ...rest } = movie.toObject();
+    const { movieUrl, plot_embedding, ...rest } = movie.toObject();
 
     return res.status(200).json({
       data: {
@@ -97,11 +97,17 @@ const getLatestMovies = async (req, res) => {
         .status(400)
         .json({ message: "Invalid page requested", data: {} });
 
-    const movies = await Movie.find({ released: { $lte: new Date() } })
+    let movies = await Movie.find({ released: { $lte: new Date() } })
       .sort({ released: -1 })
       .skip(skip)
       .limit(perPage);
     // .select("title released");
+
+    movies = movies.map((movie) => {
+      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+      return rest;
+    });
+
     return res
       .status(200)
       .json({ message: "Latest movies fetched", data: movies });
@@ -130,11 +136,16 @@ const getUpcomingMovies = async (req, res) => {
         .status(400)
         .json({ message: "Invalid page requested", data: {} });
 
-    const movies = await Movie.find({ released: { $gt: new Date() } })
+    let movies = await Movie.find({ released: { $gt: new Date() } })
       .sort({ released: 1 })
       .skip(skip)
       .limit(perPage);
     // .select("title released");
+
+    movies = movies.map((movie) => {
+      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+      return rest;
+    });
 
     return res
       .status(200)
@@ -199,10 +210,15 @@ const filterMovies = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Invalid page requested", data: {} });
-    const movies = await Movie.find(query)
+    let movies = await Movie.find(query)
       .sort({ released: -1 })
       .skip((page - 1) * perPage)
       .limit(perPage);
+
+    movies = movies.map((movie) => {
+      const { movieUrl, plot_embedding, ...rest } = movie.toObject();
+      return rest;
+    });
 
     return res
       .status(200)
