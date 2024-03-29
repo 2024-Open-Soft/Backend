@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const { body } = require("express-validator");
+const { body, header, oneOf } = require("express-validator");
 const multer = require("multer");
 
 const { isLoggedIn, isAdmin } = require("../middlewares");
-const { getAllUsers, getUser } = require("../controllers/admin-user");
+const { getAllUsers, getUser, createUser, updateUser, deleteUser } = require("../controllers/admin-user");
 const {
   getMovie,
   getAllMovies,
@@ -19,8 +19,41 @@ const { createSubscriptionPlan } = require("../controllers/admin-plan");
 router.get("/user", isLoggedIn, isAdmin, getAllUsers);
 router.get("/user/:id", isLoggedIn, isAdmin, getUser);
 
-router.get("/movie/:id", isLoggedIn, isAdmin, getMovie);
-router.get("/movie", isLoggedIn, isAdmin, getAllMovies);
+router.post("/user",
+  body("email").exists().isEmail().withMessage("Email is required"),
+  body("password").exists().isLength({ min: 8 }).withMessage("Password is required"),
+  body("name").exists().withMessage("Name is required"),
+  body("phoneNumber").exists().isMobilePhone().withMessage("Phone number is required"),
+  body("countryCode").exists().withMessage("Country code is required"),
+  header("Authorization").exists().withMessage("Token is required"),
+  isLoggedIn, isAdmin, createUser);
+
+router.put("/user/:id",
+  oneOf([
+    body("email").exists().isEmail().withMessage("Email is required"),
+    body("password").exists().isLength({ min: 8 }).withMessage("Password is required"),
+    body("name").exists().withMessage("Name is required"),
+    body("phoneNumber").exists().isMobilePhone().withMessage("Phone number is required"),
+  ]),
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+  isLoggedIn, isAdmin, updateUser);
+
+router.delete("/user/:id",
+  body("userId").exists().withMessage("User ID is required"),
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+  isLoggedIn, isAdmin, deleteUser);
+
+router.get("/movie/:id",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+  isLoggedIn, isAdmin, getMovie);
+
+router.get("/movie",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+  isLoggedIn, isAdmin, getAllMovies);
 
 router.delete(
   "/movie/comments",
