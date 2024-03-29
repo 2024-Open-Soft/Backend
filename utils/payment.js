@@ -17,7 +17,7 @@ const generatePaymentLink = async (
   customer,
   planID,
   startDate,
-  orignalDuration,
+  originalDuration,
   user,
 ) => {
   const razorpayInstance = new Razorpay({
@@ -30,11 +30,11 @@ const generatePaymentLink = async (
     currency: currency,
     accept_partial: false,
     notes: {
-      planID: planID,
+      planID,
       userID: user._id,
-      referenceId: referenceId,
-      startDate: startDate,
-      orignalDuration: orignalDuration,
+      referenceId,
+      startDate,
+      originalDuration,
     },
     customer: customer,
     expire_by: getUnixTime(), // 30 minutes past the current time
@@ -59,4 +59,3 @@ const generatePaymentLink = async (
 module.exports = {
   generatePaymentLink,
 };
-
