@@ -8,7 +8,7 @@ router.post(
   "/generate",
   oneOf(
     [
-      body("phoneNumber").exists().isMobilePhone(),
+      [body("phoneNumber").exists().isMobilePhone(), body("countryCode").exists()],
       [body("email").exists().isEmail(), header("Authorization").exists()],
     ],
     { message: "Email with Authentication or phoneNumber is required" },
