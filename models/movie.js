@@ -58,6 +58,7 @@ const MovieSchema = new Schema({
   num_mflix_comments: Number,
   plot: String,
   plot_embedding: [Number],
+  summary_embedding: [Number],
   poster: String,
   rated: String,
   released: Date,
@@ -68,6 +69,7 @@ const MovieSchema = new Schema({
   writers: [String],
   year: Number,
   comments: [ref("Comment")],
+  trailer: String,
 });
 
 const Movie = mongoose.model("Movie", MovieSchema);
