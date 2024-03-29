@@ -1,15 +1,17 @@
 const router = require("express").Router();
 const { body, header } = require("express-validator");
-
 const { isLoggedIn } = require("../middlewares");
+
 const {
   updateHistoryController,
   deleteHistoryController,
 } = require("../controllers/history");
+
 const {
   updateWatchlistController,
   deleteWatchlistController,
 } = require("../controllers/watchlist");
+
 const { validate } = require("../utils/validator");
 
 const {
@@ -18,7 +20,9 @@ const {
   getLatestMovies,
   getUpcomingMovies,
   getMovieWatchLink,
+  filterMovies
 } = require("../controllers/movie");
+
 
 router.post(
   "/history",
@@ -72,6 +76,8 @@ router.get("/", getMovies);
 router.get("/latest", getLatestMovies);
 
 router.get("/upcoming", getUpcomingMovies);
+
+router.get("/filter", filterMovies)
 
 router.get("/:id", getMovie);
 
