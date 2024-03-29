@@ -80,7 +80,7 @@ const searchOnEnter = async (req, res) => {
       const skip = (page - 1) * pageSize;
       movies = await Movie.find(
         { title: { $regex: "^" + queryForRegex, $options: "i" } },
-        { title: 1, _id: 1 }
+        { title: 1, _id: 1, poster: 1 }
       )
         .skip(skip)
         .limit(pageSize);
