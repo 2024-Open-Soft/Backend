@@ -20,9 +20,8 @@ const {
   getLatestMovies,
   getUpcomingMovies,
   getMovieWatchLink,
-  filterMovies
+  filterMovies,
 } = require("../controllers/movie");
-
 
 router.post(
   "/history",
@@ -77,7 +76,7 @@ router.get("/latest", getLatestMovies);
 
 router.get("/upcoming", getUpcomingMovies);
 
-router.get("/filter", filterMovies)
+router.get("/filter", filterMovies);
 
 router.get("/:id", getMovie);
 
@@ -85,7 +84,6 @@ router.post(
   "/watch",
   [
     body("movieId", "Movie Id required").exists(),
-    body("resolution", "Resolution required").exists().isNumeric(),
     header("Authorization", "Authorization token is required").exists(),
   ],
   validate,

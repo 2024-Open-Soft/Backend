@@ -8,7 +8,6 @@ const getMovies = async (req, res) => {
     const page = req.query.page ? parseInt(req.query.page) : 1;
     const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
 
-
     let movies = await Movie.find()
       .skip((page - 1) * 10)
       .limit(10);
@@ -92,8 +91,11 @@ const getLatestMovies = async (req, res) => {
       released: { $lte: new Date() },
     }).countDocuments();
     const totalPage = Math.floor((totalResults + perPage - 1) / perPage);
-    
-    if (totalPage !== 0 && page > totalPage) return res.status(400).json({ message: "Invalid page requested", data: {} });
+
+    if (totalPage !== 0 && page > totalPage)
+      return res
+        .status(400)
+        .json({ message: "Invalid page requested", data: {} });
 
     const movies = await Movie.find({ released: { $lte: new Date() } })
       .sort({ released: -1 })
@@ -108,12 +110,12 @@ const getLatestMovies = async (req, res) => {
   }
 };
 
-
 const getUpcomingMovies = async (req, res) => {
   const page = req.query.page ? parseInt(req.query.page) : 1;
   const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
 
-  if (page < 1) return res.status(400).json({ error: "Invalid page requested", data: {} });
+  if (page < 1)
+    return res.status(400).json({ error: "Invalid page requested", data: {} });
 
   const skip = (page - 1) * perPage;
 
@@ -146,8 +148,7 @@ const getfeaturedMovie = async (req, res) => {
   try {
     const featuredMovies = await Movie.find({ isfeatured: true });
     return res.status(200).json({ data: featuredMovies });
-  } 
-  catch (error) {
+  } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Interval server error" });
   }
@@ -159,60 +160,65 @@ function getMovieWatchLink(req, res) {
 
   const { activeSubscription } = getActiveSubscriptionPlan(req.user);
 
-  if (
-    parseInt(
-      activeSubscription.features.filter(
-        ({ name }) => name === "max-resolution",
-      )[0].value,
-    ) <= req.body.resolution
-  )
-    return res
-      .status(401)
-      .json({ error: "Your subscription does not support this resolution" });
-
-  let url = aws.getCloudfrontUrl(
-    `transcoded/${movie._id}-${req.body.resolution}.m3u8`,
+  const maxRes = parseInt(
+    activeSubscription.features.filter(
+      ({ name }) => name === "max-resolution",
+    )[0].value,
   );
-  return res.json({ url });
+
+  let urls = [360, 720, 1080]
+    .filter((res) => res <= maxRes)
+    .map((res) => aws.getCloudfrontUrl(`transcoded/${movie._id}-${res}.m3u8`));
+  return res.json({ urls });
 }
 
-const filterMovies = async(req,res) => {
-    const {genres, languages, rating} = req.query;
+const filterMovies = async (req, res) => {
+  const { genres, languages, rating } = req.query;
 
-    const page = req.query.page ? parseInt(req.query.page) : 1;
-    const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
-    let query = {};
-    if(rating) query = { 
-        'imdb.rating': { $gt: parseFloat(rating), $lte: parseFloat(rating)+1 }
+  const page = req.query.page ? parseInt(req.query.page) : 1;
+  const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
+  let query = {};
+  if (rating)
+    query = {
+      "imdb.rating": { $gt: parseFloat(rating), $lte: parseFloat(rating) + 1 },
     };
-    if(genres) query.genres = {
-        $elemMatch: { $in: genres.split(',') }
+  if (genres)
+    query.genres = {
+      $elemMatch: { $in: genres.split(",") },
     };
-    if(languages) query.languages = {
-        $elemMatch: { $in: languages.split(',') }
+  if (languages)
+    query.languages = {
+      $elemMatch: { $in: languages.split(",") },
     };
-   
-    try {
-        const totalResults = await Movie.find(query).countDocuments();
-        const totalPage = Math.floor((totalResults + perPage - 1) / perPage);
-      
-        if (page > totalPage && totalPage!==0) return res.status(400).json({ message: "Invalid page requested", data: {} });
-        const movies = await Movie.find(query).sort({ released: -1 }).skip((page - 1) * perPage).limit(perPage);
-      
-        return res.status(200).json({ message: "Filtered movies fetched", data: movies, totalPage });
-    } 
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({error: "Internal server error"});
-    }
-}
+
+  try {
+    const totalResults = await Movie.find(query).countDocuments();
+    const totalPage = Math.floor((totalResults + perPage - 1) / perPage);
+
+    if (page > totalPage && totalPage !== 0)
+      return res
+        .status(400)
+        .json({ message: "Invalid page requested", data: {} });
+    const movies = await Movie.find(query)
+      .sort({ released: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    return res
+      .status(200)
+      .json({ message: "Filtered movies fetched", data: movies, totalPage });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   getMovies,
   getMovie,
   getLatestMovies,
   getUpcomingMovies,
-  getfeaturedMovie, 
+  getfeaturedMovie,
   filterMovies,
   getMovieWatchLink,
 };
