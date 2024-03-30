@@ -23,8 +23,11 @@ const {
   updateMovie,
   uploadMovieFile,
   uploadTrailer,
+  uploadPoster,
   deleteMovie,
   deleteTrailer,
+  deleteMovieVideo,
+  deletePoster,
 } = require("../controllers/admin-movie");
 const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
@@ -161,13 +164,22 @@ router.post(
   uploadMovieFile
 );
 
-router.post(
-  "/movie/:movieId/delete",
+router.delete(
+  "/movie/:movieId/movie/delete",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
   isLoggedIn,
   isAdmin,
   deleteMovie
+);
+
+router.delete(
+  "/movie/:movieId/video/delete",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+  isLoggedIn,
+  isAdmin,
+  deleteMovieVideo
 );
 
 router.post(
@@ -180,7 +192,7 @@ router.post(
   uploadTrailer
 );
 
-router.post(
+router.delete(
   "/movie/:movieId/trailer/delete",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
@@ -196,10 +208,10 @@ router.post(
   isLoggedIn,
   isAdmin,
   multer().single("file"),
-  uploadTrailer
+  uploadPoster
 );
 
-router.post(
+router.delete(
   "/movie/:movieId/poster/delete",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
@@ -207,7 +219,7 @@ router.post(
   isAdmin,
   body("movieId").exists().withMessage("Movie ID is required"),
   validate,
-  deleteTrailer
+  deletePoster
 );
 
 module.exports = router;

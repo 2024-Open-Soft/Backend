@@ -85,6 +85,19 @@ async function deleteMovie(req, res) {
   return res.json({ message: "success" });
 }
 
+async function deleteMovieVideo(req, res) {
+  const movie = await Movie.findById(req.params.movieId);
+  if (!movie) return res.status(400).json({ error: "not a valid movie id" });
+
+  try {
+    await aws.deleteFile(`movies/${movie._id}`);
+  } catch (e) {
+    return res.status(500).json({ error: "error uploading to s3" });
+  }
+
+  return res.json({ message: "success" });
+}
+
 async function uploadTrailer(req, res) {
   const file = req.file;
   const movie = await Movie.findById(req.params.movieId);
@@ -235,6 +248,7 @@ module.exports = {
   uploadMovieFile,
   uploadTrailer,
   deleteMovie,
+  deleteMovieVideo,
   deleteTrailer,
   uploadPoster,
   deletePoster,
