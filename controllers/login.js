@@ -18,8 +18,6 @@ const loginUser = async (req, res) => {
 
     const { phoneNumber, password } = req.body;
 
-    console.log(phoneNumber, password);
-
     const user = await User.findOne({
       phone: phoneNumber,
     });
@@ -34,9 +32,8 @@ const loginUser = async (req, res) => {
       return res.status(401).send({ error: "Invalid credentials" });
     }
 
-    const { activeSubscription, maxDevices } = await getActiveSubscriptionPlan(
-      user
-    );
+    const { activeSubscription, maxDevices } =
+      await getActiveSubscriptionPlan(user);
 
     let tokens = getActiveTokens(user.tokens);
 

@@ -14,8 +14,6 @@ const getActiveSubscriptionPlan = async (user) => {
       startDate.getTime() + duration * 30 * 24 * 60 * 60 * 1000,
     );
 
-    console.log({ sub: i, currentdate, startDate, duration, createdAt });
-
     if (endDate >= currentdate && startDate <= currentdate) {
       const plan = await SubscriptionPlan.findById(i.plan);
 
@@ -41,4 +39,3 @@ const getActiveSubscriptionPlan = async (user) => {
 };
 
 module.exports = { getActiveSubscriptionPlan };
-

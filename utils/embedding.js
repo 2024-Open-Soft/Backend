@@ -2,9 +2,8 @@ const axios = require("axios");
 
 async function getEmbedding(query) {
   // Define the OpenAI API url and key.
-  const url = 'https://api.openai.com/v1/embeddings';
+  const url = "https://api.openai.com/v1/embeddings";
   const openai_key = process.env.OPENAI_SECRET_KEY;
-  // console.log(openai_key);
 
   // Call OpenAI API to get the embeddings.
   let response = await axios
@@ -19,7 +18,7 @@ async function getEmbedding(query) {
           Authorization: `Bearer ${openai_key}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     )
     .catch((e) => console.log(e.toString()));
 
@@ -69,3 +68,4 @@ async function findSimilarDocuments(embedding) {
   //   }
 }
 module.exports = { getEmbedding, findSimilarDocuments };
+
