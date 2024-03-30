@@ -53,11 +53,12 @@ const updateSubscriptionPlan = async (req, res) => {
 };
 
 
-const  updatePlan=async(req,res)=>{
-    try{
+const updatePlan = async (req, res) => {
+    try {
+        console.log(req.params.id)
         const plan = await SubscriptionPlan.findById(req.params.id);
 
-        const { name='', price=-1, discountPercentage=-1, features=[] } = req.body;
+        const { name = '', price = -1, discountPercentage = -1, maxResolution = -1, maxDevices = -1 } = req.body;
 
         if (!plan) {
             return res.status(404).json({ error: "Subscription plan not found" });
@@ -75,8 +76,12 @@ const  updatePlan=async(req,res)=>{
             plan.discountPercentage = discountPercentage;
         }
 
-        if (features.length > 0) {
-            plan.features = features;
+        if (maxResolution >= 0) {
+            plan.features[0].value = `${maxResolution}`;
+        }
+
+        if (maxDevices >= 0) {
+            plan.features[1].value = `${maxDevices}`;
         }
 
         await plan.save();
@@ -86,10 +91,29 @@ const  updatePlan=async(req,res)=>{
                 plan: plan.toObject(),
             },
         });
-    }catch(error){
+    } catch (error) {
         return res.status(400).json({ error: "Error updating subscription plan" });
     }
 
 }
 
-module.exports = { createSubscriptionPlan, updateSubscriptionPlan ,updatePlan};
+const deletePlan = async (req, res) => {
+    try {
+        const plan = await SubscriptionPlan.findByIdAndDelete(req.params.id);
+
+        if (!plan) {
+            return res.status(404).json({ error: "Subscription plan not found" });
+        }
+
+        return res.json({
+            message: "Subscription Plan deleted successfully",
+            data: {
+                plan: plan.toObject(),
+            },
+        });
+    } catch (error) {
+        return res.status(400).json({ error: "Error deleting subscription plan" });
+    }
+};
+
+module.exports = { createSubscriptionPlan, updateSubscriptionPlan, updatePlan, deletePlan };

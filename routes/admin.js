@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { body, header, oneOf } = require("express-validator");
 const multer = require("multer");
 
-const { updatePlan } = require("../controllers/admin-plan");
+const { createSubscriptionPlan, updatePlan, deletePlan } = require("../controllers/admin-plan");
 
 const { isLoggedIn, isAdmin } = require("../middlewares");
 const { getAllUsers, getUser, createUser, updateUser, deleteUser } = require("../controllers/admin-user");
@@ -18,7 +18,6 @@ const {
 } = require("../controllers/admin-movie");
 const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
-const { createSubscriptionPlan } = require("../controllers/admin-plan");
 
 router.get("/user", 
   header("Authorization").exists().withMessage("Token is required"),
@@ -79,6 +78,8 @@ router.delete(
 router.post("/plan", isLoggedIn, isAdmin, createSubscriptionPlan);
 
 router.put("/plan/:id",isLoggedIn, isAdmin, updatePlan);
+
+router.delete("/plan/:id",isLoggedIn, isAdmin, deletePlan);
 
 router.post(
   "/movie/upload",
