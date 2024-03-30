@@ -144,7 +144,7 @@ const getUpcomingMovies = async (req, res) => {
   }
 };
 
-const getfeaturedMovie = async (req, res) => {
+const getFeaturedMovies = async (req, res) => {
   try {
     const featuredMovies = await Movie.find({ isfeatured: true });
     return res.status(200).json({ data: featuredMovies });
