@@ -30,7 +30,7 @@ router.post(
     body("movieId", "Movie Id required").exists(),
     body("timestamp", "Timestamp required")
       .optional()
-      .isLength({ min: 5, max: 8 }),
+      .isNumeric(),
     header("Authorization", "Authorization token is required").exists(),
   ],
   validate,
