@@ -98,9 +98,9 @@ router.post(
   uploadMovie
 )
 
-
-router.patch(
+router.put(
   "/movie/:id",
+  header("Authorization").exists().withMessage("Token is required"),
   validate,
   isLoggedIn,
   isAdmin,
@@ -109,16 +109,23 @@ router.patch(
 
 router.post(
   "/movie/:movieId/upload",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
   isLoggedIn,
   isAdmin,
   multer().single("file"),
   uploadMovieFile,
 );
 
-router.post("/movie/:movieId/delete", isLoggedIn, isAdmin, deleteMovie);
+router.post("/movie/:movieId/delete", 
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
+isLoggedIn, isAdmin, deleteMovie);
 
 router.post(
   "/movie/:movieId/trailer/upload",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
   isLoggedIn,
   isAdmin,
   multer().single("file"),
@@ -127,6 +134,8 @@ router.post(
 
 router.post(
   "/movie/:movieId/trailer/delete",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
   isLoggedIn,
   isAdmin,
   deleteTrailer,
@@ -134,6 +143,8 @@ router.post(
 
 router.post(
   "/movie/:movieId/poster/upload",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
   isLoggedIn,
   isAdmin,
   multer().single("file"),
@@ -142,6 +153,8 @@ router.post(
 
 router.post(
   "/movie/:movieId/poster/delete",
+  header("Authorization").exists().withMessage("Token is required"),
+  validate,
   isLoggedIn,
   isAdmin,
   body("movieId").exists().withMessage("Movie ID is required"),
