@@ -101,12 +101,13 @@ function getCloudfrontUrl(fileName) {
   date.setDate(date.getDate() + 1);
   date = date.toISOString();
 
-  return getSignedUrl({
-    url: aws.cloudfront.fqdn + `${fileName}`,
-    keyPairId: process.env.AWS_CLOUDFRONT_KEYPAIR_ID,
-    dateLessThan: date.split("T")[0],
-    privateKey: aws.cloudfront.key
-  });
+  // return getSignedUrl({
+  //   url: aws.cloudfront.fqdn + `${fileName}`,
+  //   keyPairId: process.env.AWS_CLOUDFRONT_KEYPAIR_ID,
+  //   dateLessThan: date.split("T")[0],
+  //   privateKey: aws.cloudfront.key
+  // });
+  return aws.cloudfront.fqdn + `${fileName}`;
 }
 
 async function upload(file, name) {
