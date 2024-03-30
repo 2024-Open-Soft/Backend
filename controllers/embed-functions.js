@@ -15,13 +15,13 @@ async function getEmbedding(query, upto, openai_key) {
           Authorization: `Bearer ${openai_key}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     if (response.status === 200) {
       return response.data.data[0].embedding;
     } else {
       throw new Error(
-        `Failed to get embedding. Status code: ${response.status}`
+        `Failed to get embedding. Status code: ${response.status}`,
       );
     }
   } catch (error) {
@@ -53,6 +53,7 @@ async function findSimilarDocuments(embedding, limit, page) {
           title: 1,
           plot: 1,
           _id: 1,
+          poster: 1,
         },
       },
     ]);
@@ -62,3 +63,4 @@ async function findSimilarDocuments(embedding, limit, page) {
   }
 }
 module.exports = { getEmbedding, findSimilarDocuments };
+

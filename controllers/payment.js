@@ -90,8 +90,6 @@ const verification = async (req, res) => {
 
     const signatureIsValid = generated_signature === razorpay_signature;
 
-    console.log({ signatureIsValid });
-
     if (signatureIsValid) {
       // storing the payment details in the database
       const { referenceId, userID, planID, startDate, originalDuration } =

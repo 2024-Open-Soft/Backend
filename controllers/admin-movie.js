@@ -44,8 +44,6 @@ const getMovie = async (req, res) => {
 
 async function uploadMovieFile(req, res) {
   const file = req.file;
-  console.log("moviefile : ", file);
-  console.log("body : ", req.body);
   const movie = await Movie.findById(req.params.movieId);
 
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
