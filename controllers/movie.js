@@ -8,9 +8,9 @@ const getMovies = async (req, res) => {
     const page = req.query.page ? parseInt(req.query.page) : 1;
     const perPage = req.query.perPage ? parseInt(req.query.perPage) : 50;
 
-    let movies = await Movie.find()
-      .skip((page - 1) * 10)
-      .limit(10);
+    const skip = (page - 1) * perPage;
+
+    let movies = await Movie.find().skip(skip).limit(perPage);
 
     // remove movie's video url from each movie object
     movies = movies.map((movie) => {
@@ -62,6 +62,7 @@ const getMovie = async (req, res) => {
 
     // remove movie's url from movie object
     const { movieUrl, plot_embedding, summary_embedding, ...rest } = movie.toObject();
+
 
     return res.status(200).json({
       data: {
@@ -155,7 +156,7 @@ const getUpcomingMovies = async (req, res) => {
   }
 };
 
-const getfeaturedMovie = async (req, res) => {
+const getFeaturedMovies = async (req, res) => {
   try {
     const featuredMovies = await Movie.find({ isfeatured: true });
     return res.status(200).json({ data: featuredMovies });
@@ -165,11 +166,15 @@ const getfeaturedMovie = async (req, res) => {
   }
 };
 
-function getMovieWatchLink(req, res) {
-  const movie = Movie.findById(req.body.movieId);
+async function getMovieWatchLink(req, res) {
+  const movie = await Movie.findById(req.body.movieId);
   if (!movie) return res.json({ error: "not a valid movieId" });
 
-  const { activeSubscription } = getActiveSubscriptionPlan(req.user);
+  const { activeSubscription } = await getActiveSubscriptionPlan(req.user);
+  if (!activeSubscription)
+    return res
+      .status(401)
+      .json({ error: "you donot have a subscription plan" });
 
   const maxRes = parseInt(
     activeSubscription.features.filter(
@@ -179,7 +184,9 @@ function getMovieWatchLink(req, res) {
 
   let urls = [360, 720, 1080]
     .filter((res) => res <= maxRes)
-    .map((res) => aws.getCloudfrontUrl(`transcoded/${movie._id}-${res}.m3u8`));
+    .map((res) =>
+      aws.getCloudfrontUrl(`movies/${movie._id}/original-${res}.m3u8`),
+    );
   return res.json({ urls });
 }
 
@@ -234,7 +241,7 @@ module.exports = {
   getMovie,
   getLatestMovies,
   getUpcomingMovies,
-  getfeaturedMovie,
+  getFeaturedMovies,
   filterMovies,
   getMovieWatchLink,
 };

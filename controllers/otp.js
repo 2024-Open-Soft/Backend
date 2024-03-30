@@ -12,7 +12,6 @@ const generateOtp = async (req, res) => {
 
     const payload = {};
 
-
     let otp = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit OTP
 
     if (phoneNumber) {
@@ -57,9 +56,15 @@ const generateOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     const otp = parseInt(req.body.otp);
-    const { phoneNumber, countryCode, email, otp: tokenOtp, userId } = parseToken(req);
+    const {
+      phoneNumber,
+      countryCode,
+      email,
+      otp: tokenOtp,
+      userId,
+    } = parseToken(req);
 
-    const payload = {}
+    const payload = {};
 
     const isMatch = await bcrypt.compare(`${otp}`, tokenOtp);
     if (!isMatch) {
@@ -83,7 +88,6 @@ const verifyOtp = async (req, res) => {
         payload.userId = user._id;
       }
     } else {
-
       user = await User.findOne({
         _id: userId,
       });
@@ -114,9 +118,6 @@ const verifyOtp = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-
 
 module.exports = {
   generateOtp,

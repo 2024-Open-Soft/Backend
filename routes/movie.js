@@ -21,6 +21,7 @@ const {
   getUpcomingMovies,
   getMovieWatchLink,
   filterMovies,
+  getFeaturedMovies
 } = require("../controllers/movie");
 
 router.post(
@@ -77,6 +78,8 @@ router.get("/latest", getLatestMovies);
 router.get("/upcoming", getUpcomingMovies);
 
 router.get("/filter", filterMovies);
+
+router.get("/featured", featuredMovies);
 
 router.get("/:id", getMovie);
 
