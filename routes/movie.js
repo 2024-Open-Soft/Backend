@@ -79,7 +79,7 @@ router.get("/upcoming", getUpcomingMovies);
 
 router.get("/filter", filterMovies);
 
-router.get("/featured", featuredMovies);
+router.get("/featured", getFeaturedMovies);
 
 router.get("/:id", getMovie);
 

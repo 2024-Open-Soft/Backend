@@ -4,7 +4,6 @@ require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-const { getfeaturedMovie } = require("./controllers/movie")
 
 
 // webserver init
@@ -22,8 +21,6 @@ const routes = require("./routes");
 for (let prefix in routes) {
   app.use(`/${prefix}`, routes[prefix]);
 }
-
-app.get("/featured", getfeaturedMovie);
 
 app.all('*', (req, res, next) => {
   return res.status(404).json({ message: `Can't find ${req.url} on the server` })
