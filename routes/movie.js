@@ -21,7 +21,7 @@ const {
   getUpcomingMovies,
   getMovieWatchLink,
   filterMovies,
-  featuredMovies
+  getFeaturedMovies
 } = require("../controllers/movie");
 
 router.post(
