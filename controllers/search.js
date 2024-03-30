@@ -67,7 +67,7 @@ const searchOnEnter = async (req, res) => {
         },
         { $skip: skip },
         { $limit: pageSize },
-        { $project: { _id: 1, title: 1 } },
+        { $project: { _id: 1, title: 1, poster: 1 } },
       ]);
       // for each movie in movies, check if it is already present in regexMovies , if it is already there then remove it from movies
       movies = movies.filter(

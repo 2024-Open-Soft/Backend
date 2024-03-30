@@ -2,10 +2,20 @@ const router = require("express").Router();
 const { body, header, oneOf } = require("express-validator");
 const multer = require("multer");
 
-const { createSubscriptionPlan, updatePlan, deletePlan } = require("../controllers/admin-plan");
+const {
+  createSubscriptionPlan,
+  updatePlan,
+  deletePlan,
+} = require("../controllers/admin-plan");
 
 const { isLoggedIn, isAdmin } = require("../middlewares");
-const { getAllUsers, getUser, createUser, updateUser, deleteUser } = require("../controllers/admin-user");
+const {
+  getAllUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser,
+} = require("../controllers/admin-user");
 const {
   getMovie,
   getAllMovies,
@@ -19,26 +29,45 @@ const {
 const { deleteComment } = require("../controllers/admin-comment");
 const { validate } = require("../utils/validator");
 
-router.get("/user", 
+router.get(
+  "/user",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-isLoggedIn, isAdmin, getAllUsers);
-router.get("/user/:id", 
+  isLoggedIn,
+  isAdmin,
+  getAllUsers
+);
+router.get(
+  "/user/:id",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-isLoggedIn, isAdmin, getUser);
+  isLoggedIn,
+  isAdmin,
+  getUser
+);
 
-router.post("/user",
+router.post(
+  "/user",
   body("email").exists().isEmail().withMessage("Email is required"),
-  body("password").exists().isLength({ min: 8 }).withMessage("Password is required"),
+  body("password")
+    .exists()
+    .isLength({ min: 8 })
+    .withMessage("Password is required"),
   body("name").exists().withMessage("Name is required"),
-  body("phoneNumber").exists().isMobilePhone().withMessage("Phone number is required"),
+  body("phoneNumber")
+    .exists()
+    .isMobilePhone()
+    .withMessage("Phone number is required"),
   body("countryCode").exists().withMessage("Country code is required"),
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-  isLoggedIn, isAdmin, createUser);
+  isLoggedIn,
+  isAdmin,
+  createUser
+);
 
-router.put("/user/:id",
+router.put(
+  "/user/:id",
   oneOf([
     body("email").isEmail(),
     body("password").isLength({ min: 8 }),
@@ -48,22 +77,37 @@ router.put("/user/:id",
   ]),
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-  isLoggedIn, isAdmin, updateUser);
+  isLoggedIn,
+  isAdmin,
+  updateUser
+);
 
-router.delete("/user/:id",
+router.delete(
+  "/user/:id",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-  isLoggedIn, isAdmin, deleteUser);
+  isLoggedIn,
+  isAdmin,
+  deleteUser
+);
 
-router.get("/movie/:id",
+router.get(
+  "/movie/:id",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-  isLoggedIn, isAdmin, getMovie);
+  isLoggedIn,
+  isAdmin,
+  getMovie
+);
 
-router.get("/movie",
+router.get(
+  "/movie",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-  isLoggedIn, isAdmin, getAllMovies);
+  isLoggedIn,
+  isAdmin,
+  getAllMovies
+);
 
 router.delete(
   "/movie/comments",
@@ -72,31 +116,31 @@ router.delete(
   validate,
   isLoggedIn,
   isAdmin,
-  deleteComment,
+  deleteComment
 );
 
 router.post("/plan", isLoggedIn, isAdmin, createSubscriptionPlan);
 
-router.put("/plan/:id",isLoggedIn, isAdmin, updatePlan);
+router.put("/plan/:id", isLoggedIn, isAdmin, updatePlan);
 
-router.delete("/plan/:id",isLoggedIn, isAdmin, deletePlan);
+router.delete("/plan/:id", isLoggedIn, isAdmin, deletePlan);
 
 router.post(
   "/movie/upload",
-  body('title').exists().withMessage('Field is required'),
-  body('plot').exists().withMessage('Field is required'),
-  body('genres').exists().withMessage('Field is required'),
-  body('runtime').exists().withMessage('Field is required'),
-  body('cast').exists().withMessage('Field is required'),
-  body('languages').exists().withMessage('Field is required'),
-  body('released').exists().withMessage('Field is required'),
-  body('directors').exists().withMessage('Field is required'),
-  body('rated').exists().withMessage('Field is required'),
+  body("title").exists().withMessage("Field is required"),
+  body("plot").exists().withMessage("Field is required"),
+  body("genres").exists().withMessage("Field is required"),
+  body("runtime").exists().withMessage("Field is required"),
+  body("cast").exists().withMessage("Field is required"),
+  body("languages").exists().withMessage("Field is required"),
+  body("released").exists().withMessage("Field is required"),
+  body("directors").exists().withMessage("Field is required"),
+  body("rated").exists().withMessage("Field is required"),
   validate,
   isLoggedIn,
   isAdmin,
   uploadMovie
-)
+);
 
 router.put(
   "/movie/:id",
@@ -105,7 +149,7 @@ router.put(
   isLoggedIn,
   isAdmin,
   updateMovie
-)
+);
 
 router.post(
   "/movie/:movieId/upload",
@@ -114,13 +158,17 @@ router.post(
   isLoggedIn,
   isAdmin,
   multer().single("file"),
-  uploadMovieFile,
+  uploadMovieFile
 );
 
-router.post("/movie/:movieId/delete", 
+router.post(
+  "/movie/:movieId/delete",
   header("Authorization").exists().withMessage("Token is required"),
   validate,
-isLoggedIn, isAdmin, deleteMovie);
+  isLoggedIn,
+  isAdmin,
+  deleteMovie
+);
 
 router.post(
   "/movie/:movieId/trailer/upload",
@@ -129,7 +177,7 @@ router.post(
   isLoggedIn,
   isAdmin,
   multer().single("file"),
-  uploadTrailer,
+  uploadTrailer
 );
 
 router.post(
@@ -138,7 +186,7 @@ router.post(
   validate,
   isLoggedIn,
   isAdmin,
-  deleteTrailer,
+  deleteTrailer
 );
 
 router.post(
@@ -148,7 +196,7 @@ router.post(
   isLoggedIn,
   isAdmin,
   multer().single("file"),
-  uploadTrailer,
+  uploadTrailer
 );
 
 router.post(
@@ -159,7 +207,7 @@ router.post(
   isAdmin,
   body("movieId").exists().withMessage("Movie ID is required"),
   validate,
-  deleteTrailer,
+  deleteTrailer
 );
 
 module.exports = router;

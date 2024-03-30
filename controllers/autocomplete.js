@@ -88,45 +88,45 @@ const autocomplete = async (req, res) => {
 
     let totalRuntime = performance.now() - totalTime;
 
-    const workbook = await xlsx.fromFileAsync(
-      "opensoft-autocomplete-results.xlsx"
-    );
-    const sheet = workbook.sheet("Sheet1");
+    // const workbook = await xlsx.fromFileAsync(
+    //   "opensoft-autocomplete-results.xlsx"
+    // );
+    // const sheet = workbook.sheet("Sheet1");
 
-    sheet.cell("A1").value("Query");
-    sheet.cell("B1").value("Tab Complete");
-    sheet.cell("C1").value("Regex Matches");
-    sheet.cell("D1").value("Exact and Fuzzy Matches");
-    sheet.cell("E1").value("Total Matches");
-    // sheet.cell("F1").value("Regex Time (ms)");
-    sheet.cell("F1").value("Combined Search Time (ms)");
-    sheet.cell("G1").value("Merging Time (ms)");
-    sheet.cell("H1").value("Total Runtime (ms)");
+    // sheet.cell("A1").value("Query");
+    // sheet.cell("B1").value("Tab Complete");
+    // sheet.cell("C1").value("Regex Matches");
+    // sheet.cell("D1").value("Exact and Fuzzy Matches");
+    // sheet.cell("E1").value("Total Matches");
+    // // sheet.cell("F1").value("Regex Time (ms)");
+    // sheet.cell("F1").value("Combined Search Time (ms)");
+    // sheet.cell("G1").value("Merging Time (ms)");
+    // sheet.cell("H1").value("Total Runtime (ms)");
 
-    for (let i = 0; i < 15; i++) {
-      sheet.cell(1, 10 + i).value(`Result ${i + 1}`);
-    }
+    // for (let i = 0; i < 15; i++) {
+    //   sheet.cell(1, 10 + i).value(`Result ${i + 1}`);
+    // }
 
-    let lastRow = sheet.usedRange().endCell().rowNumber();
-    sheet.cell(`A${lastRow + 1}`).value(query);
-    // console.log("regex movies length", movies2.length);
-    sheet
-      .cell(`B${lastRow + 1}`)
-      .value(regexSearchCount > 0 ? movies2[0].title : null);
-    sheet.cell(`C${lastRow + 1}`).value(regexSearchCount);
-    sheet.cell(`D${lastRow + 1}`).value(finalMovies.length - regexSearchCount);
-    sheet.cell(`E${lastRow + 1}`).value(finalMovies.length);
-    sheet.cell(`F${lastRow + 1}`).value(combinedSearchTime);
-    sheet.cell(`G${lastRow + 1}`).value(mergingTime);
-    sheet.cell(`H${lastRow + 1}`).value(totalRuntime);
+    // let lastRow = sheet.usedRange().endCell().rowNumber();
+    // sheet.cell(`A${lastRow + 1}`).value(query);
+    // // console.log("regex movies length", movies2.length);
+    // sheet
+    //   .cell(`B${lastRow + 1}`)
+    //   .value(regexSearchCount > 0 ? movies2[0].title : null);
+    // sheet.cell(`C${lastRow + 1}`).value(regexSearchCount);
+    // sheet.cell(`D${lastRow + 1}`).value(finalMovies.length - regexSearchCount);
+    // sheet.cell(`E${lastRow + 1}`).value(finalMovies.length);
+    // sheet.cell(`F${lastRow + 1}`).value(combinedSearchTime);
+    // sheet.cell(`G${lastRow + 1}`).value(mergingTime);
+    // sheet.cell(`H${lastRow + 1}`).value(totalRuntime);
 
-    for (let i = 0; i < 15; i++) {
-      sheet
-        .cell(lastRow + 1, 10 + i)
-        .value(finalMovies[i] ? finalMovies[i].title : null);
-    }
+    // for (let i = 0; i < 15; i++) {
+    //   sheet
+    //     .cell(lastRow + 1, 10 + i)
+    //     .value(finalMovies[i] ? finalMovies[i].title : null);
+    // }
 
-    await workbook.toFileAsync("opensoft-autocomplete-results.xlsx");
+    // await workbook.toFileAsync("opensoft-autocomplete-results.xlsx");
 
     res.json({
       message: "Success",
