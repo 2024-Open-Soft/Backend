@@ -61,7 +61,7 @@ async function convertVideo(videoFileName, resolutions, outputFolder) {
         Type: "HLS_GROUP_SETTINGS",
         HlsGroupSettings: {
           SegmentLength: 10,
-          Destination: "s3://" + process.env.AWS_S3_BUCKET + `/${outputFolder}`,
+          Destination: "s3://" + aws.s3.bucket + `/${outputFolder}`,
           MinSegmentLength: 0,
         },
       },
@@ -83,7 +83,7 @@ async function convertVideo(videoFileName, resolutions, outputFolder) {
           },
           VideoSelector: {},
           TimecodeSource: "ZEROBASED",
-          FileInput: "s3://" + aws.s3.bucket + videoFileName,
+          FileInput: "s3://" + aws.s3.bucket + `/${videoFileName}`,
         },
       ],
     },
@@ -101,12 +101,13 @@ function getCloudfrontUrl(fileName) {
   date.setDate(date.getDate() + 1);
   date = date.toISOString();
 
-  return getSignedUrl({
-    url: aws.cloudfront.fqdn + `${fileName}`,
-    keyPairId: process.env.AWS_CLOUDFRONT_KEYPAIR_ID,
-    dateLessThan: date.split("T")[0],
-    privateKey: fs.readFileSync("./key.pem"),
-  });
+  // return getSignedUrl({
+  //   url: aws.cloudfront.fqdn + `${fileName}`,
+  //   keyPairId: process.env.AWS_CLOUDFRONT_KEYPAIR_ID,
+  //   dateLessThan: date.split("T")[0],
+  //   privateKey: aws.cloudfront.key
+  // });
+  return aws.cloudfront.fqdn + `${fileName}`;
 }
 
 async function upload(file, name) {
@@ -116,7 +117,7 @@ async function upload(file, name) {
   });
   const command = new PutObjectCommand({
     Key: `${name}`,
-    Bucket: aws.s3bucket,
+    Bucket: aws.s3.bucket,
     Body: file,
   });
   return client.send(command);
@@ -133,7 +134,7 @@ function deleteFile(fileName) {
   });
   const command = new DeleteObjectCommand({
     Key: `${fileName}`,
-    Bucket: aws.s3bucket,
+    Bucket: aws.s3.bucket,
     Body: file,
   });
   return client.send(command);

@@ -1,15 +1,17 @@
 const router = require("express").Router();
 const { body, header } = require("express-validator");
-
 const { isLoggedIn } = require("../middlewares");
+
 const {
   updateHistoryController,
   deleteHistoryController,
 } = require("../controllers/history");
+
 const {
   updateWatchlistController,
   deleteWatchlistController,
 } = require("../controllers/watchlist");
+
 const { validate } = require("../utils/validator");
 
 const {
@@ -18,6 +20,8 @@ const {
   getLatestMovies,
   getUpcomingMovies,
   getMovieWatchLink,
+  filterMovies,
+  getFeaturedMovies
 } = require("../controllers/movie");
 
 router.post(
@@ -26,7 +30,7 @@ router.post(
     body("movieId", "Movie Id required").exists(),
     body("timestamp", "Timestamp required")
       .optional()
-      .isLength({ min: 5, max: 8 }),
+      .isNumeric(),
     header("Authorization", "Authorization token is required").exists(),
   ],
   validate,
@@ -73,13 +77,16 @@ router.get("/latest", getLatestMovies);
 
 router.get("/upcoming", getUpcomingMovies);
 
+router.get("/filter", filterMovies);
+
+router.get("/featured", getFeaturedMovies);
+
 router.get("/:id", getMovie);
 
 router.post(
   "/watch",
   [
     body("movieId", "Movie Id required").exists(),
-    body("resolution", "Resolution required").exists().isNumeric(),
     header("Authorization", "Authorization token is required").exists(),
   ],
   validate,

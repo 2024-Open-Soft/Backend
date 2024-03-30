@@ -41,7 +41,8 @@ async function findSimilarDocuments(embedding, limit, page) {
         $project: {
           title: 1,
           plot: 1,
-          _id: 0,
+          _id: 1,
+          poster: 1,
         },
       },
     ]);

@@ -34,18 +34,22 @@ const loginUser = async (req, res) => {
       return res.status(401).send({ error: "Invalid credentials" });
     }
 
-    const { activeSubscription, maxDevices } = await getActiveSubscriptionPlan(user);
+    const { activeSubscription, maxDevices } = await getActiveSubscriptionPlan(
+      user
+    );
 
-    let tokens = getActiveTokens(user.tokens)
+    let tokens = getActiveTokens(user.tokens);
 
-    if (tokens.length >= maxDevices) {
-      return res.status(401).send({ error: "Maximum number of devices reached" });
+    if (tokens.length >= maxDevices && user?.isAdmin === false) {
+      return res
+        .status(401)
+        .send({ error: "Maximum number of devices reached" });
     }
 
     const token = generateJWT({ id: user._id }, jwtExpiryTime);
-    tokens.push(token)
-    
-    await User.findByIdAndUpdate(user._id, { tokens: tokens })
+    tokens.push(token);
+
+    await User.findByIdAndUpdate(user._id, { tokens: tokens });
 
     const data = await createUserObject(user);
 
@@ -53,7 +57,7 @@ const loginUser = async (req, res) => {
       message: "User logged in",
       data: {
         token,
-        user: { ...data, activeSubscription }
+        user: { ...data, activeSubscription },
       },
     });
   } catch (err) {
@@ -62,23 +66,22 @@ const loginUser = async (req, res) => {
   }
 };
 
-
 const logoutUser = async (req, res) => {
   try {
     const user = req.user;
     const token = req.token;
 
-    const newTokens = user.tokens.filter(t => t !== token);
+    const newTokens = user.tokens.filter((t) => t !== token);
     await User.findByIdAndUpdate(user._id, { tokens: newTokens });
 
     return res.status(200).json({ message: "User logged out" });
-
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "Internal Server Error" });
   }
-}
+};
 
 module.exports = {
-  loginUser, logoutUser
+  loginUser,
+  logoutUser,
 };
