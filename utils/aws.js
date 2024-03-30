@@ -107,7 +107,7 @@ function getCloudfrontUrl(fileName) {
   //   dateLessThan: date.split("T")[0],
   //   privateKey: aws.cloudfront.key
   // });
-  return `${aws.cloudfront.fqdn}${fileName}`;
+  return aws.cloudfront.fqdn + `${fileName}`;
 }
 
 async function upload(file, name) {

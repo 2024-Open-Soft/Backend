@@ -2,7 +2,7 @@ const { User } = require("../models");
 
 const updateHistoryController = async (req, res) => {
     try {
-        const { movieId, timeStamp } = req.body;
+        const { movieId, timeStamp=0 } = req.body;
         
         let user = req.user;
         if(!user.history)

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { forgotPassword, resetPassword } = require("../controllers/password");
+const { forgotPassword, resetPassword, validToken } = require("../controllers/password");
 
 const { body, header } = require("express-validator");
 const { validate } = require("../utils/validator");
@@ -15,5 +15,10 @@ router.post("/reset", [
     header("Authorization", "Authorization token is required").exists(),
 ],
     validate, resetPassword);
+
+router.get("/valid-token", [
+    header("Authorization", "Authorization token is required").exists(),
+],
+    validate, validToken);
 
 module.exports = router;
