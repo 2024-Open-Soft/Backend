@@ -224,7 +224,7 @@ module.exports = {
   getMovie,
   getLatestMovies,
   getUpcomingMovies,
-  getfeaturedMovie,
+  getFeaturedMovies,
   filterMovies,
   getMovieWatchLink,
 };
