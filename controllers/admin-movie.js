@@ -72,7 +72,10 @@ async function deleteMovie(req, res) {
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
   try {
+    await aws.deleteFile(`posters/${movie._id}`);
+    await aws.deleteFile(`trailers/${movie._id}`);
     await aws.deleteFile(`movies/${movie._id}`);
+    await Movie.findByIdAndDelete(movie._id);
   } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
   }
@@ -172,11 +175,46 @@ const uploadMovie = async (req, res) => {
 const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
+    const { IMDB=-1, actors="", date="", rated="", languages="", plot="", title="", writers="", year=-1 } = req.body;
     if (!id) {
       return res.status(404).json({ error: "Movie not found" });
     }
-    const movie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
+    const movie = await Movie.findById(id);
+
+    if (!movie) {
+      return res.status(404).json({ error: "Movie not found" });
+    }
+
+
+    if(date != "") {
+      // check if date is valid
+      if(isNaN(Date.parse(date))) {
+        return res.status(400).json({ error: "Invalid date" });
+      }
+      movie.released = date;
+    }
+    if(IMDB !== -1) 
+      movie.imdb.rating = IMDB;
+    if(actors != "")
+      movie.cast = actors.split(", ");
+    if(rated != "")
+      movie.rated = rated;
+    if(languages != "")
+      movie.languages = languages.split(", ");
+    if(plot != "")
+      movie.plot = plot;
+    if(title != "")
+      movie.title = title;
+    if(writers != "")
+      movie.writers = writers.split(", ");
+    if(year != -1)
+      movie.year = year;
+
+
+    await movie.save();
+
     return res.status(200).json({
+      message: "Movie updated successfully",
       data: {
         movie,
       },
