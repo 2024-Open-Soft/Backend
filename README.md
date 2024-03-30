@@ -12,11 +12,7 @@ Backend for MFLIX
 
 ## Installation
 
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/2024-Open-Soft/Backend.git
-    ```
+1. Download the repository and open a terminal.
 
 2. Navigate to the project directory:
 
