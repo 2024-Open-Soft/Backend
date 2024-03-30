@@ -46,7 +46,7 @@ const generatePaymentLink = async (
     reminder_enable: true,
     options: {
       checkout: {
-        name: 'WIIO',
+        name: 'MFLIX',
         theme: {
           hide_topbar: true,
         },

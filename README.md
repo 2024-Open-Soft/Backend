@@ -49,14 +49,14 @@ Backend for WIIO
 4. Add the `key id` and `key secret` as environment variables.
 
 5. Create an webhook (for payment verification) from `Accounts and Settings` with the following configurations at https://dashboard.razorpay.com/app/website-app-settings/webhooks
-    > **Webhook URL:** *`<your backend url>/payment/verification`*
-    >
-    > **Webhook Secret:** Generate a strong secret and save it
-    > 
-    > **Active events:** Select `payment.captured`
+
+    | Variables           | Values                                      |
+    | ------------------- | ------------------------------------------- |
+    | Webhook URL         | *`<your backend url>/payment/verification`* |
+    | Webhook Secret      | Generate a strong secret and save it        |
+    | Active events       | Select `payment.captured`                   |
 
 ## Defining environment variables
-
 
 ```bash
 DATABASE_URL = "<your mongodb url>"
