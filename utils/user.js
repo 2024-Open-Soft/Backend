@@ -62,4 +62,3 @@ const createUserObject = async (user) => {
 };
 
 module.exports = { createUserObject };
-

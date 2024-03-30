@@ -100,29 +100,27 @@ const verification = async (req, res) => {
 
       const user = await User.findOne({ _id: userID });
 
-      const ind = user.payments.findIndex(
-        (sub) => sub.referenceId === referenceId,
+      const payments = user.payments.map((p) =>
+        p.referenceId === referenceId
+          ? {
+              ...p,
+              status: status === "captured" ? "PAID" : "PAYMENT_ERROR",
+              paymentId: id,
+              orderId: order_id,
+              razorpay_signature: razorpay_signature,
+            }
+          : p,
       );
-
-      const payment = {
-        status: status === "captured" ? "PAID" : "PAYMENT_ERROR",
-        paymentId: id,
-        orderId: order_id,
-        razorpay_signature: razorpay_signature,
-      };
 
       const subscription = {
         plan: planID,
         startDate,
         originalDuration,
-        payment,
+        payment: payments.filter((p) => p.referenceId === referenceId)[0],
       };
 
-      let payments = user.payments;
-      payments[ind] = payment;
-
       await User.findByIdAndUpdate(userID, {
-        payments: payments,
+        payments,
         $push: { subscriptions: subscription },
       });
     } else {
