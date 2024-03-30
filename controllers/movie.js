@@ -113,6 +113,7 @@ const getLatestMovies = async (req, res) => {
       .status(200)
       .json({ message: "Latest movies fetched", data: movies });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ error: "Interval server error" });
   }
 };
@@ -153,6 +154,7 @@ const getUpcomingMovies = async (req, res) => {
       .status(200)
       .json({ message: "Upcoming movies fetched", data: movies });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ error: "Interval server error" });
   }
 };
@@ -168,27 +170,32 @@ const getFeaturedMovies = async (req, res) => {
 };
 
 async function getMovieWatchLink(req, res) {
-  const movie = await Movie.findById(req.body.movieId);
-  if (!movie) return res.json({ error: "not a valid movieId" });
+  try {
+    const movie = await Movie.findById(req.body.movieId);
+    if (!movie) return res.json({ error: "not a valid movieId" });
 
-  const { activeSubscription } = await getActiveSubscriptionPlan(req.user);
-  if (!activeSubscription)
-    return res
-      .status(401)
-      .json({ error: "you donot have a subscription plan" });
+    const { activeSubscription } = await getActiveSubscriptionPlan(req.user);
+    if (!activeSubscription)
+      return res
+        .status(401)
+        .json({ error: "you donot have a subscription plan" });
 
-  const maxRes = parseInt(
-    activeSubscription.features.filter(
-      ({ name }) => name === "max-resolution",
-    )[0].value,
-  );
-
-  let urls = [360, 720, 1080]
-    .filter((res) => res <= maxRes)
-    .map((res) =>
-      aws.getCloudfrontUrl(`movies/${movie._id}/original-${res}.m3u8`),
+    const maxRes = parseInt(
+      activeSubscription.features.filter(
+        ({ name }) => name === "max-resolution",
+      )[0].value,
     );
-  return res.json({ urls });
+
+    let urls = [360, 720, 1080]
+      .filter((res) => res <= maxRes)
+      .map((res) =>
+        aws.getCloudfrontUrl(`movies/${movie._id}/original-${res}.m3u8`),
+      );
+    return res.json({ urls });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Unable to fetch urls" });
+  }
 }
 
 const filterMovies = async (req, res) => {

@@ -217,8 +217,6 @@ router.delete(
   validate,
   isLoggedIn,
   isAdmin,
-  body("movieId").exists().withMessage("Movie ID is required"),
-  validate,
   deletePoster
 );
 

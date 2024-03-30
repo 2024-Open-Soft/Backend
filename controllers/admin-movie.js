@@ -51,6 +51,7 @@ async function uploadMovieFile(req, res) {
   try {
     await aws.upload(file.buffer, `movies/${movie._id}/original`);
   } catch (e) {
+    console.log(e)
     return res.status(500).json({ error: "error uploading to s3" });
   }
 
@@ -61,6 +62,7 @@ async function uploadMovieFile(req, res) {
       `movies/${movie._id}/`
     );
   } catch (e) {
+    console.log(e)
     return res.status(500).json({ error: "error converting video" });
   }
 
@@ -75,11 +77,16 @@ async function deleteMovie(req, res) {
     await aws.deleteFile(`posters/${movie._id}`);
     await aws.deleteFile(`trailers/${movie._id}`);
     await aws.deleteFile(`movies/${movie._id}`);
+  } catch (e) {
+    console.log(e)
+    return res.status(500).json({ error: "Error deleting from s3" });
+  }
+  try {
     await Movie.findByIdAndDelete(movie._id);
   } catch (e) {
-    return res.status(500).json({ error: "error uploading to s3" });
+    console.log(e)
+    return res.status(500).json({ error: "Error deleting from database" })
   }
-
   return res.json({ message: "success" });
 }
 
@@ -90,9 +97,9 @@ async function deleteMovieVideo(req, res) {
   try {
     await aws.deleteFile(`movies/${movie._id}`);
   } catch (e) {
-    return res.status(500).json({ error: "error uploading to s3" });
+    console.log(e)
+    return res.status(500).json({ error: "error deleting to s3" });
   }
-
   return res.json({ message: "success" });
 }
 
@@ -105,6 +112,7 @@ async function uploadTrailer(req, res) {
   try {
     await aws.upload(file.buffer, `trailers/${movie._id}/original`);
   } catch (e) {
+    console.log(e)
     return res.status(500).json({ error: "error uploading to s3" });
   }
 
@@ -115,12 +123,17 @@ async function uploadTrailer(req, res) {
       `trailers/${movie._id}/`
     );
   } catch (e) {
+    console.log(e)
     return res.status(500).json({ error: "error converting video" });
   }
-
-  await Movie.findByIdAndUpdate(movie._id, {
-    trailer: aws.getS3Url(`trailers/${movie._id}/original-1080.m3u8`),
-  });
+  try {
+    await Movie.findByIdAndUpdate(movie._id, {
+      trailer: aws.getS3Url(`trailers/${movie._id}/original-1080.m3u8`),
+    });
+  } catch (e) {
+    console.log(e)
+    return res.status(500).json({ error: "error updating database" });
+  }
 
   return res.json({ message: "success" });
 }
@@ -132,7 +145,16 @@ async function deleteTrailer(req, res) {
   try {
     await aws.deleteFile(`trailers/${movie._id}`);
   } catch (e) {
+    console.log(e)
     return res.status(500).json({ error: "error uploading to s3" });
+  }
+  try {
+    await Movie.findByIdAndUpdate(movie._id, {
+      trailer: null,
+    });
+  } catch(e) {
+    console.log(e)
+    return res.status(500).json({ error: "error updating database" });
   }
 
   return res.json({ message: "success" });
@@ -150,9 +172,14 @@ async function uploadPoster(req, res) {
     return res.status(500).json({ error: "error uploading to s3" });
   }
 
-  await Movie.findByIdAndUpdate(movie._id, {
-    poster: aws.getS3Url(`posters/${movie._id}`),
-  });
+  try {
+    await Movie.findByIdAndUpdate(movie._id, {
+      poster: aws.getS3Url(`posters/${movie._id}`),
+    });
+  } catch (e) {
+    console.log(e)
+    return res.status(500).json({ error: "error updating database" });
+  }
 
   return res.json({ message: "success" });
 }
@@ -166,7 +193,14 @@ async function deletePoster(req, res) {
   } catch (e) {
     return res.status(500).json({ error: "error uploading to s3" });
   }
-
+  try {
+    await Movie.findByIdAndUpdate(movie._id, {
+      poster: null,
+    });
+  } catch (e) {
+    console.log(e)
+    return res.status(500).json({ error: "error updating database" });
+  }
   return res.json({ message: "success" });
 }
 

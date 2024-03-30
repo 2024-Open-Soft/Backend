@@ -11,6 +11,7 @@ const deleteComment = async (req, res) => {
       message: "Comment deleted successfully",
     });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ error: "Error deleting comment" });
   }
 };

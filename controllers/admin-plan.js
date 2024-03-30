@@ -45,6 +45,7 @@ const updateSubscriptionPlan = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ error: "Error creating subscription plan" });
   }
 };
@@ -93,6 +94,7 @@ const updatePlan = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ error: "Error updating subscription plan" });
   }
 };
@@ -112,6 +114,7 @@ const deletePlan = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ error: "Error deleting subscription plan" });
   }
 };
