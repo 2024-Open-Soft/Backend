@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 
 // webserver init
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT;
 
 // middlewares
 app.use(express.json());
@@ -27,8 +27,9 @@ app.all('*', (req, res, next) => {
 });
 
 async function main() {
-  await mongoose.connect(process.env.DATABASE_URL);
+  await mongoose.connect(`${process.env.DATABASE_URL}`);
   app.listen(PORT, () => {
+    console.log(`${process.env.DATABASE_URL}`)
     console.log(`App listening on port ${PORT}`);
     console.log(`Test on http://localhost:${PORT}/`);
   });

@@ -57,7 +57,7 @@ const UserSchema = new Schema(
     history: [
       new Schema({
         movie: ref("Movie"),
-        timeStamp: { type: String, default: "00:00:00" },
+        timeStamp: { type: Number, default: 0 },
       }),
     ],
     watchLater: [ref("Movie")],

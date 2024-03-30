@@ -44,6 +44,8 @@ const getMovie = async (req, res) => {
 
 async function uploadMovieFile(req, res) {
   const file = req.file;
+  console.log("moviefile : ", file);
+  console.log("body : ", req.body);
   const movie = await Movie.findById(req.params.movieId);
 
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
@@ -58,7 +60,7 @@ async function uploadMovieFile(req, res) {
     await aws.convertVideo(
       `movies/${movie._id}/original`,
       [360, 720, 1080],
-      `movies/${movie._id}/`,
+      `movies/${movie._id}/`
     );
   } catch (e) {
     return res.status(500).json({ error: "error converting video" });
@@ -68,6 +70,22 @@ async function uploadMovieFile(req, res) {
 }
 
 async function deleteMovie(req, res) {
+  const movie = await Movie.findById(req.params.movieId);
+  if (!movie) return res.status(400).json({ error: "not a valid movie id" });
+
+  try {
+    await aws.deleteFile(`posters/${movie._id}`);
+    await aws.deleteFile(`trailers/${movie._id}`);
+    await aws.deleteFile(`movies/${movie._id}`);
+    await Movie.findByIdAndDelete(movie._id);
+  } catch (e) {
+    return res.status(500).json({ error: "error uploading to s3" });
+  }
+
+  return res.json({ message: "success" });
+}
+
+async function deleteMovieVideo(req, res) {
   const movie = await Movie.findById(req.params.movieId);
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
 
@@ -96,7 +114,7 @@ async function uploadTrailer(req, res) {
     await aws.convertVideo(
       `trailers/${movie._id}/original`,
       [1080],
-      `trailers/${movie._id}/`,
+      `trailers/${movie._id}/`
     );
   } catch (e) {
     return res.status(500).json({ error: "error converting video" });
@@ -172,11 +190,46 @@ const uploadMovie = async (req, res) => {
 const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
+    const {
+      IMDB = -1,
+      actors = "",
+      date = "",
+      rated = "",
+      languages = "",
+      plot = "",
+      title = "",
+      writers = "",
+      year = -1,
+    } = req.body;
+
+    const movie = await Movie.findById(id);
+
+    if (!movie) {
+      return res.status(404).json({ error: "Movie not found" });
+    }
+
+    if (date != "") {
+      // check if date is valid
+      if (isNaN(Date.parse(date))) {
+        return res.status(400).json({ error: "Invalid date" });
+      }
+      movie.released = date;
+    }
+    if (IMDB !== -1) movie.imdb.rating = IMDB;
+    if (actors != "") movie.cast = actors.split(", ");
+    if (rated != "") movie.rated = rated;
+    if (languages != "") movie.languages = languages.split(", ");
+    if (plot != "") movie.plot = plot;
+    if (title != "") movie.title = title;
+    if (writers != "") movie.writers = writers.split(", ");
+    if (year != -1) movie.year = year;
+    await movie.save();
+
     if (!id) {
       return res.status(404).json({ error: "Movie not found" });
     }
-    const movie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
     return res.status(200).json({
+      message: "Movie updated successfully",
       data: {
         movie,
       },
@@ -195,6 +248,7 @@ module.exports = {
   uploadMovieFile,
   uploadTrailer,
   deleteMovie,
+  deleteMovieVideo,
   deleteTrailer,
   uploadPoster,
   deletePoster,

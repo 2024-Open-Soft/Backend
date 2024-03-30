@@ -43,4 +43,24 @@ const resetPassword = async (req, res) => {
     }
 }
 
-module.exports = { forgotPassword, resetPassword };
+const validToken = async (req, res) => {
+    try {
+        const { userId } = parseToken(req);
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(400).json({ error: "User not found", valid: false });
+        }
+
+        return res.status(200).json({ message: "Valid token", valid: true});
+    } catch (error) {
+        console.log(error);
+        // if the error is due to token expired or invalid token then send Token expired message
+        if (error.name === "TokenExpiredError" || error.name === "JsonWebTokenError") {
+            return res.status(400).json({ error: "Token expired", valid: false});
+        }
+        return res.status(500).json({ error: "Internal server error", valid: false});
+    }
+}
+
+module.exports = { forgotPassword, resetPassword, validToken };
