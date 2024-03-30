@@ -24,7 +24,7 @@ const searchOnEnter = async (req, res) => {
       // if user query has consecutive spaces, replace them with a single space
       const regexMovies = await Movie.find(
         { title: { $regex: "^" + queryForRegex, $options: "i" } },
-        { title: 1, _id: 1 }
+        { title: 1, _id: 1, poster: 1}
       );
       const regexMoviesLength = regexMovies.length;
       page = page - Math.ceil(regexMoviesLength / pageSize);
@@ -67,7 +67,7 @@ const searchOnEnter = async (req, res) => {
         },
         { $skip: skip },
         { $limit: pageSize },
-        { $project: { _id: 1, title: 1 } },
+        { $project: { _id: 1, title: 1, poster:1 } },
       ]);
       // for each movie in movies, check if it is already present in regexMovies , if it is already there then remove it from movies
       movies = movies.filter(
