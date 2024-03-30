@@ -5,6 +5,7 @@ Backend for WIIO
 ## Table of Contents
 
 - [Installation](#installation)
+- [Setting up Razorpay](#setting-up-razorpay)
 - [Defining environment variables](#defining-environment-variables)
 - [Run the project](#run-the-project)
 
@@ -59,9 +60,9 @@ Backend for WIIO
 
 ```bash
 DATABASE_URL = "<your mongodb url>"
-key_id = "<your razorpay key id>"
-key_secret = "<your razorpay key secret>"
-webhook_secret = "<your razorpay webhook secret>"
+RZ_KEY_ID = "<your razorpay key id>"
+RZ_KEY_SECRET = "<your razorpay key secret>"
+RZ_WEBHOOK_SECRET = "<your razorpay webhook secret>"
 TWILIO_MS_SID = "<enter your twilio ms sid here>"
 
 more to add here...
@@ -73,6 +74,6 @@ more to add here...
 Use the following command to run:
 
 ```bash
-npm start
+npm run dev
 ```
 
