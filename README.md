@@ -177,7 +177,7 @@ npm run dev
         </tr>
         <tr>
             <td>/movie/:movieId/delete</td>
-            <td>post</td>
+            <td>delete</td>
             <td>delete movie by movieId</td>
         </tr>
         <tr>
@@ -187,7 +187,7 @@ npm run dev
         </tr>
         <tr>
             <td>/movie/:movieId/trailer/delete</td>
-            <td>post</td>
+            <td>delete</td>
             <td>delete trailer by movieId</td>
         </tr>
         <tr>
@@ -197,7 +197,7 @@ npm run dev
         </tr>
         <tr>
             <td>/movie/:movieId/poster/delete</td>
-            <td>post</td>
+            <td>delete</td>
             <td>delete poster by movieId</td>
         </tr>
         <tr>
