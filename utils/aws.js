@@ -127,17 +127,20 @@ function getS3Url(fileName) {
   return `https://${aws.s3.bucket}.s3.${aws.region}.amazonaws.com/${fileName}`;
 }
 
-function deleteFile(fileName) {
-  const client = new S3Client({
-    credentials: aws.credentials,
-    region: aws.region,
-  });
-  const command = new DeleteObjectCommand({
-    Key: `${fileName}`,
-    Bucket: aws.s3.bucket,
-    Body: file,
-  });
-  return client.send(command);
+async function deleteFile(fileName) {
+  try {
+    const client = new S3Client({
+      credentials: aws.credentials,
+      region: aws.region,
+    });
+    const command = new DeleteObjectCommand({
+      Key: `${fileName}`,
+      Bucket: aws.s3.bucket,
+    });
+    return await client.send(command);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 module.exports = {

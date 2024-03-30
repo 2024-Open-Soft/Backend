@@ -90,8 +90,6 @@ const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log(" body : ", req.body);
-
     const user = await User.findByIdAndUpdate(id, { ...req.body });
 
     if (!user) {

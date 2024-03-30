@@ -44,8 +44,6 @@ const getMovie = async (req, res) => {
 
 async function uploadMovieFile(req, res) {
   const file = req.file;
-  console.log("moviefile : ", file);
-  console.log("body : ", req.body);
   const movie = await Movie.findById(req.params.movieId);
 
   if (!movie) return res.status(400).json({ error: "not a valid movie id" });
@@ -60,7 +58,7 @@ async function uploadMovieFile(req, res) {
     await aws.convertVideo(
       `movies/${movie._id}/original`,
       [360, 720, 1080],
-      `movies/${movie._id}/`
+      `movies/${movie._id}/`,
     );
   } catch (e) {
     return res.status(500).json({ error: "error converting video" });
@@ -114,7 +112,7 @@ async function uploadTrailer(req, res) {
     await aws.convertVideo(
       `trailers/${movie._id}/original`,
       [1080],
-      `trailers/${movie._id}/`
+      `trailers/${movie._id}/`,
     );
   } catch (e) {
     return res.status(500).json({ error: "error converting video" });
@@ -153,7 +151,7 @@ async function uploadPoster(req, res) {
   }
 
   await Movie.findByIdAndUpdate(movie._id, {
-    poster: aws.getS3Url(`posters/${movie._id}/original-1080.m3u8`),
+    poster: aws.getS3Url(`posters/${movie._id}`),
   });
 
   return res.json({ message: "success" });
