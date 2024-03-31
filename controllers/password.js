@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const { generateJWT, parseToken } = require("../utils/token");
 const sendingMail = require("../utils/mailer");
+const bcrypt = require("bcryptjs");
 
 const forgotPassword = async (req, res) => {
     try {
@@ -17,7 +18,7 @@ const forgotPassword = async (req, res) => {
             from: "no-reply@example.com",
             to: email,
             subject: "Reset Password",
-            text: `Click here to reset your password: http://${process.env.BASE_URL}/reset/${token}`,
+            text: `Click here to reset your password: ${process.env.BASE_URL}/reset-password/${token}`,
         });
         return res.status(200).json({ message: "Password reset link sent to your email" });
     } catch (error) {

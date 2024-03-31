@@ -8,6 +8,7 @@ const generateJWT = (data, expiresIn = "100m") => {
 
 const parseToken = (req) => {
   const token = req.headers.authorization.split(" ")[1];
+  
   return jwt.verify(token, JWT);
 };
 

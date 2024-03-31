@@ -23,6 +23,7 @@ const generateOtp = async (req, res) => {
       payload.countryCode = countryCode;
     } else {
       const token = parseToken(req);
+
       const userId = token.userId;
       const user = await User.findById(userId);
       if (!user) {
@@ -76,6 +77,7 @@ const verifyOtp = async (req, res) => {
     });
 
     if (phoneNumber) {
+
       if (user && user.password) {
         return res.status(400).json({ error: "User already exists" });
       }
@@ -85,8 +87,8 @@ const verifyOtp = async (req, res) => {
           phone: phoneNumber,
           countryCode: countryCode,
         });
-        payload.userId = user._id;
       }
+      payload.userId = user._id;
     } else {
       user = await User.findOne({
         _id: userId,
