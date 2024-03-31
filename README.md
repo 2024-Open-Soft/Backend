@@ -17,7 +17,7 @@ Backend for MFLIX
 2. Navigate to the project directory:
 
     ```bash
-    cd backend
+    cd Backend
     ```
 
 3. Install dependencies:
