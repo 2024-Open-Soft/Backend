@@ -16,7 +16,7 @@ const getAllMovies = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -37,7 +37,7 @@ const getMovie = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -51,7 +51,7 @@ async function uploadMovieFile(req, res) {
   try {
     await aws.upload(file.buffer, `movies/${movie._id}/original`);
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error uploading to s3" });
   }
 
@@ -62,7 +62,7 @@ async function uploadMovieFile(req, res) {
       `movies/${movie._id}/`
     );
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error converting video" });
   }
 
@@ -78,13 +78,13 @@ async function deleteMovie(req, res) {
     await aws.deleteFile(`trailers/${movie._id}`);
     await aws.deleteFile(`movies/${movie._id}`);
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "Error deleting from s3" });
   }
   try {
     await Movie.findByIdAndDelete(movie._id);
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "Error deleting from database" })
   }
   return res.json({ message: "success" });
@@ -97,7 +97,7 @@ async function deleteMovieVideo(req, res) {
   try {
     await aws.deleteFile(`movies/${movie._id}`);
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error deleting to s3" });
   }
   return res.json({ message: "success" });
@@ -112,7 +112,7 @@ async function uploadTrailer(req, res) {
   try {
     await aws.upload(file.buffer, `trailers/${movie._id}/original`);
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error uploading to s3" });
   }
 
@@ -123,7 +123,7 @@ async function uploadTrailer(req, res) {
       `trailers/${movie._id}/`
     );
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error converting video" });
   }
   try {
@@ -131,7 +131,7 @@ async function uploadTrailer(req, res) {
       trailer: aws.getS3Url(`trailers/${movie._id}/original-1080.m3u8`),
     });
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error updating database" });
   }
 
@@ -145,15 +145,15 @@ async function deleteTrailer(req, res) {
   try {
     await aws.deleteFile(`trailers/${movie._id}`);
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error uploading to s3" });
   }
   try {
     await Movie.findByIdAndUpdate(movie._id, {
       trailer: null,
     });
-  } catch(e) {
-    console.log(e)
+  } catch (e) {
+    // console.log(e)
     return res.status(500).json({ error: "error updating database" });
   }
 
@@ -177,7 +177,7 @@ async function uploadPoster(req, res) {
       poster: aws.getS3Url(`posters/${movie._id}`),
     });
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error updating database" });
   }
 
@@ -198,7 +198,7 @@ async function deletePoster(req, res) {
       poster: null,
     });
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(500).json({ error: "error updating database" });
   }
   return res.json({ message: "success" });
@@ -214,7 +214,7 @@ const uploadMovie = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -267,7 +267,7 @@ const updateMovie = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

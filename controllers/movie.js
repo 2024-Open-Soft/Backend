@@ -25,7 +25,7 @@ const getMovies = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -70,7 +70,7 @@ const getMovie = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -113,7 +113,7 @@ const getLatestMovies = async (req, res) => {
       .status(200)
       .json({ message: "Latest movies fetched", data: movies });
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return res.status(500).json({ error: "Interval server error" });
   }
 };
@@ -154,7 +154,7 @@ const getUpcomingMovies = async (req, res) => {
       .status(200)
       .json({ message: "Upcoming movies fetched", data: movies });
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return res.status(500).json({ error: "Interval server error" });
   }
 };
@@ -164,7 +164,7 @@ const getFeaturedMovies = async (req, res) => {
     const featuredMovies = await Movie.find({ isfeatured: true });
     return res.status(200).json({ data: featuredMovies });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Interval server error" });
   }
 };
@@ -193,7 +193,7 @@ async function getMovieWatchLink(req, res) {
       );
     return res.json({ urls });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Unable to fetch urls" });
   }
 }
@@ -240,7 +240,7 @@ const filterMovies = async (req, res) => {
       .status(200)
       .json({ message: "Filtered movies fetched", data: movies, totalPage });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

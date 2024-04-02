@@ -15,7 +15,7 @@ async function getEmbedding(query, upto, key) {
     const response = await axios.post(url, data, { headers });
     return response.data;
   } catch (error) {
-    console.log("error in embedding ", upto);
+    // console.log("error in embedding ", upto);
     throw error; // Re-throw the error for further handling
   }
 }

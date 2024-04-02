@@ -17,7 +17,7 @@ const getProfile = async (req, res) => {
       data: { ...data, activeSubscription: activeSubscription },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(400).json({ error: "Error fetching profile" });
   }
 };
@@ -56,7 +56,7 @@ const updateProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(400).json({ error: "Error updating profile" });
   }
 };

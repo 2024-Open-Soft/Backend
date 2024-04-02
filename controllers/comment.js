@@ -18,7 +18,7 @@ const getComments = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(400).json({ error: "Error fetching comments" });
   }
 };
@@ -45,7 +45,7 @@ const createComment = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return res.status(400).json({ error: "Error creating comment" });
   }
 };
@@ -69,7 +69,7 @@ const deleteComment = async (req, res) => {
       data: {},
     });
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return res.status(400).json({ error: "Error deleting comment" });
   }
 };
@@ -92,7 +92,7 @@ const editComment = async (req, res) => {
       data: {},
     });
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return res.status(400).json({ error: "Error editing comment" });
   }
 };

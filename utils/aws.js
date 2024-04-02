@@ -139,7 +139,7 @@ async function deleteFile(fileName) {
     });
     return await client.send(command);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 }
 

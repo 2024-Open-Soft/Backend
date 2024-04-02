@@ -22,7 +22,7 @@ const getAllUsers = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -46,7 +46,7 @@ const getUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -81,7 +81,7 @@ const createUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -104,7 +104,7 @@ const updateUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -121,7 +121,7 @@ const deleteUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

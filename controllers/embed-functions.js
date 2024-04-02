@@ -25,7 +25,7 @@ async function getEmbedding(query, upto, openai_key) {
       );
     }
   } catch (error) {
-    console.log("error in embedding ", upto);
+    // console.log("error in embedding ", upto);
     throw error; // Re-throw the error for further handling
   }
   // Call OpenAI API to get the embeddings.

@@ -2,8 +2,8 @@ const Transporter = require("nodemailer").createTransport({
   service: "Gmail",
   secure: true,
   auth: {
-    user: process.env.email || "udayomsrivastava111@gmail.com",
-    pass: process.env.emailpassword || "wvzuotypolrqepam",
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 

@@ -29,7 +29,6 @@ app.all('*', (req, res, next) => {
 async function main() {
   await mongoose.connect(`${process.env.DATABASE_URL}`);
   app.listen(PORT, () => {
-    console.log(`${process.env.DATABASE_URL}`)
     console.log(`App listening on port ${PORT}`);
     console.log(`Test on http://localhost:${PORT}/`);
   });

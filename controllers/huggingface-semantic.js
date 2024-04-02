@@ -27,7 +27,7 @@ const semantic = async (req, res) => {
     } catch (error) {
       console.error("Error with first API key:", error.message);
       try {
-        console.log("Waiting 3 seconds before retrying with second key...");
+        // console.log("Waiting 3 seconds before retrying with second key...");
         await new Promise((resolve) => setTimeout(resolve, 5000));
         embedding = await getEmbedding(query, 1, HUGGINGFACE_API_KEY_2);
       } catch (error) {

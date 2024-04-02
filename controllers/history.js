@@ -2,10 +2,10 @@ const { User } = require("../models");
 
 const updateHistoryController = async (req, res) => {
     try {
-        const { movieId, timeStamp=0 } = req.body;
-        
+        const { movieId, timeStamp = 0 } = req.body;
+
         let user = req.user;
-        if(!user.history)
+        if (!user.history)
             user.history = [];
 
         // find movieId in user.history
@@ -16,7 +16,7 @@ const updateHistoryController = async (req, res) => {
             user.history = user.history.filter((movie) => movie.movie.toString() !== movieId);
         }
 
-        console.log(timeStamp)
+        // console.log(timeStamp)
 
         user.history.unshift({ movie: movieId, timeStamp: timeStamp });
 
@@ -26,7 +26,7 @@ const updateHistoryController = async (req, res) => {
         return res.status(200).json({ message: "History updated" });
     }
     catch (error) {
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ error: "Internal server error" });
     }
 }
@@ -37,7 +37,7 @@ const deleteHistoryController = async (req, res) => {
 
         const user = req.user;
 
-        if(!user.history)
+        if (!user.history)
             user.history = [];
 
         // find movieId in user.history
@@ -54,7 +54,7 @@ const deleteHistoryController = async (req, res) => {
         return res.status(200).json({ message: "History updated" });
     }
     catch (error) {
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ error: "Internal server error" });
     }
 }

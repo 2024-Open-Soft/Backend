@@ -5,7 +5,7 @@ const getSubscriptionPlans = async (req, res) => {
     const plans = await SubscriptionPlan.find();
     return res.status(200).json(plans);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -16,7 +16,7 @@ const getSubscriptionPlan = async (req, res) => {
     const plan = await SubscriptionPlan.findById(id);
     return res.status(200).json(plan);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

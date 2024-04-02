@@ -22,7 +22,7 @@ const forgotPassword = async (req, res) => {
         });
         return res.status(200).json({ message: "Password reset link sent to your email" });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ error: "Internal server error" });
     }
 }
@@ -39,7 +39,7 @@ const resetPassword = async (req, res) => {
 
         return res.status(200).json({ message: "Password reset successfully" });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ error: "Internal server error" });
     }
 }
@@ -53,14 +53,14 @@ const validToken = async (req, res) => {
             return res.status(400).json({ error: "User not found", valid: false });
         }
 
-        return res.status(200).json({ message: "Valid token", valid: true});
+        return res.status(200).json({ message: "Valid token", valid: true });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         // if the error is due to token expired or invalid token then send Token expired message
         if (error.name === "TokenExpiredError" || error.name === "JsonWebTokenError") {
-            return res.status(400).json({ error: "Token expired", valid: false});
+            return res.status(400).json({ error: "Token expired", valid: false });
         }
-        return res.status(500).json({ error: "Internal server error", valid: false});
+        return res.status(500).json({ error: "Internal server error", valid: false });
     }
 }
 

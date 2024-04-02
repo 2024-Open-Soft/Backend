@@ -73,7 +73,7 @@ const getPaymentLink = async (req, res) => {
       .status(200)
       .json({ message: "Payment link generated", link: short_url });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).send({ error: "Internal server error" });
   }
 };
@@ -101,12 +101,12 @@ const verification = async (req, res) => {
       const payments = user.payments.map((p) =>
         p.referenceId === referenceId
           ? {
-              ...p,
-              status: status === "captured" ? "PAID" : "PAYMENT_ERROR",
-              paymentId: id,
-              orderId: order_id,
-              razorpay_signature: razorpay_signature,
-            }
+            ...p,
+            status: status === "captured" ? "PAID" : "PAYMENT_ERROR",
+            paymentId: id,
+            orderId: order_id,
+            razorpay_signature: razorpay_signature,
+          }
           : p,
       );
 
@@ -122,10 +122,10 @@ const verification = async (req, res) => {
         $push: { subscriptions: subscription },
       });
     } else {
-      console.log({ success: false, message: "Payment verification failed" });
+      // console.log({ success: false, message: "Payment verification failed" });
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     // res.status(error.status).send(error.message);
   }
 

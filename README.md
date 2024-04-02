@@ -76,6 +76,9 @@ OPENAI_API_KEY_1="<openai api key 1>"
 OPENAI_API_KEY_2="<openai api key 2>"
 OPENAI_API_URL="<openai api url>"
 PORT="<port for backend>"
+BASE_URL="<base url for frontend>"
+EMAIL="<email to send otp with>"
+EMAIL_PASSWORD="<app password for email>"
 ```
 
 
