@@ -8,7 +8,6 @@ server {
   }
 }
 "
-
 if ! command -v nginx >/dev/null; then
   sudo apt-get update
   sudo apt-get install -y nginx
